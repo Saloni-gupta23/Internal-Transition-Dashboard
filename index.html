@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Internal Transitions – Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Fonts similar to the screenshot -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Decorative background leaves (left & right) -->
+  <svg class="bg-leaves bg-leaves--left" viewBox="0 0 220 320" aria-hidden="true">
+    <defs>
+      <linearGradient id="leafGradL" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#78B7BE"/>
+        <stop offset="100%" stop-color="#4C9AA3"/>
+      </linearGradient>
+    </defs>
+    <!-- pot -->
+    <ellipse cx="86" cy="292" rx="72" ry="14" fill="#D6D3E5" opacity=".5"/>
+    <g transform="translate(36,210)">
+      <rect x="0" y="0" width="100" height="74" rx="10" fill="#EB8E3A"/>
+      <rect x="0" y="10" width="100" height="12" rx="6" fill="#CD7C2D"/>
+    </g>
+    <!-- leaves -->
+    <path d="M40 200c-30-35-28-78 12-110 9 36 11 73-12 110z" fill="url(#leafGradL)"/>
+    <path d="M72 205c-20-28-18-60 16-92 9 31 9 62-16 92z" fill="url(#leafGradL)"/>
+    <path d="M18 210c-18-22-16-49 14-74 7 26 7 50-14 74z" fill="url(#leafGradL)"/>
+    <path d="M104 210c22-30 20-65-18-100-10 34-10 67 18 100z" fill="url(#leafGradL)"/>
+  </svg>
+
+  <svg class="bg-leaves bg-leaves--right" viewBox="0 0 220 320" aria-hidden="true">
+    <defs>
+      <linearGradient id="leafGradR" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#78B7BE"/>
+        <stop offset="100%" stop-color="#4C9AA3"/>
+      </linearGradient>
+    </defs>
+    <!-- pot -->
+    <ellipse cx="134" cy="292" rx="72" ry="14" fill="#D6D3E5" opacity=".5"/>
+    <g transform="translate(84,210)">
+      <rect x="0" y="0" width="100" height="74" rx="10" fill="#EB8E3A"/>
+      <rect x="0" y="10" width="100" height="12" rx="6" fill="#CD7C2D"/>
+    </g>
+    <!-- leaves -->
+    <path d="M180 200c30-35 28-78-12-110-9 36-11 73 12 110z" fill="url(#leafGradR)"/>
+    <path d="M148 205c20-28 18-60-16-92-9 31-9 62 16 92z" fill="url(#leafGradR)"/>
+    <path d="M202 210c18-22 16-49-14-74-7 26-7 50 14 74z" fill="url(#leafGradR)"/>
+    <path d="M116 210c-22-30-20-65 18-100 10 34 10 67-18 100z" fill="url(#leafGradR)"/>
+  </svg>
+
+  <!-- Page wrap -->
+  <div class="page">
+    <!-- Header with two logos (recreated as clean vector/type) -->
+    <header class="site-header">
+  <!-- Left: PHOENIX CONTACT logo -->
+  <a class="brand" href="#" aria-label="Phoenix Contact Home">
+    <img
+      src="C:\Users\egrlaf\Desktop\internal transitions\assets\logo.svg"      
+      alt="PHOENIX CONTACT"
+      class="brand__logo"
+      height="28"
+    />
+  </a>
+
+  <!-- Right: Employee Connect wordmark (kept, recolored by CSS) -->
+  <div class="internal-transitions">
+    <span class="emp">Internal</span>
+    <span class="con">Transitions</span>
+  </div>
+</header>
+
+    <main class="content">
+      <!-- Left column: headline + subtext + phone/person illustration -->
+      <section class="left">
+        <h1 class="hero">
+          <span>Streamlining Transitions.</span><br />
+          <span>Strengthening Operations.</span>
+        </h1>
+        <p class="subcopy">
+          Transforming every service shift into a clear, controlled, and effortlessly managed transition.
+        </p>
+
+        <!-- Phone + character illustration -->
+        <div class="scene">
+          <svg class="scene-svg" viewBox="0 0 520 300" aria-hidden="true">
+            <!-- ground shadow -->
+            <ellipse cx="180" cy="265" rx="140" ry="18" fill="#D6D3E5" opacity=".7"/>
+
+            <!-- Phone body -->
+            <g transform="translate(70,70)">
+              <rect x="0" y="0" width="150" height="170" rx="6" fill="#1D3862"/>
+              <rect x="12" y="14" width="126" height="142" rx="4" fill="#EAF1F6"/>
+              <rect x="50" y="-5" width="50" height="6" rx="3" fill="#2A4C86" opacity=".7"/>
+              <!-- simple login lines -->
+              <text x="48" y="56" font-family="Inter, Arial" font-size="10" fill="#7B8BA3">USER LOGIN</text>
+              <rect x="36" y="70" width="78" height="10" rx="5" fill="#D5DEE8"/>
+              <rect x="36" y="92" width="78" height="10" rx="5" fill="#D5DEE8"/>
+              <rect x="48" y="116" width="56" height="14" rx="7" fill="#60A5B2"/>
+            </g>
+
+            <!-- Pointer cursor on phone -->
+            <g transform="translate(135,152) rotate(8)">
+              <polygon points="0,0 28,60 36,48 52,92 62,88 46,44 60,36" fill="#102544"/>
+              <polygon points="0,0 28,60 36,48" fill="#C6D3E1"/>
+            </g>
+
+            <!-- Human silhouette next to phone -->
+            <g transform="translate(230,86)">
+              <ellipse cx="80" cy="169" rx="80" ry="14" fill="#D6D3E5" opacity=".7"/>
+              <path d="M64 58c10 0 20 10 22 24l10 86H48l10-86c2-14 12-24 22-24z" fill="#1E2E40"/>
+              <circle cx="75" cy="38" r="18" fill="#C27D5C"/>
+              <rect x="55" y="62" width="42" height="66" rx="20" fill="#D84E46"/>
+              <rect x="36" y="104" width="26" height="70" rx="10" fill="#1E2E40"/>
+              <rect x="99" y="104" width="26" height="70" rx="10" fill="#1E2E40"/>
+              <rect x="40" y="174" width="30" height="8" rx="4" fill="#1E2E40"/>
+              <rect x="100" y="174" width="30" height="8" rx="4" fill="#1E2E40"/>
+              <!-- phone in hand -->
+              <rect x="114" y="98" width="20" height="28" rx="4" fill="#2A4C86"/>
+            </g>
+
+            <!-- Soft circle backdrop -->
+            <circle cx="225" cy="132" r="66" fill="#E6EDF5" />
+          </svg>
+        </div>
+      </section>
+
+      <!-- Right column: Login card -->
+      <section class="right">
+        <div class="card">
+          <h2 class="card-title">Login</h2>
+
+          <form id="loginForm" novalidate>
+            <label class="label" for="empId">Employee ID</label>
+            <div class="field">
+              <input id="empId" name="empId" type="text" placeholder="Employee ID" autocomplete="username" required/>
+            </div>
+
+            <label class="label" for="password">Password</label>
+            <div class="field field--password">
+              <input id="password" name="password" type="password" placeholder="**********" autocomplete="current-password" required/>
+              <button type="button" class="btn-eye" aria-label="Show password">
+                <!-- eye icon -->
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+
+            <div class="row row--between">
+              <span></span>
+              <a class="link-muted" href="C:\Users\egrlaf\Desktop\internal transitions\forgot.html" id="forgotLink">Forgot Password?</a>
+            </div>
+
+            <button class="btn-primary" type="submit">Login</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

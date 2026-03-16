@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Forgot Password</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    /* Page-specific tweaks that keep your palette */
+    .forgot-wrap{
+      display:grid;
+      place-items:center;
+      min-height:100vh;
+      padding: clamp(16px, 2.2vw, 40px);
+    }
+    .forgot-card{
+      background: var(--card);
+      border-radius: clamp(14px, 1.2vw, 18px);
+      width: clamp(320px, 40vw, 520px);
+      box-shadow: var(--shadow);
+      padding: clamp(20px, 2.2vw, 28px);
+    }
+    .forgot-card h1{
+      font-family: Poppins, Inter, sans-serif;
+      color: var(--brand-blue);
+      font-size: clamp(20px, 1.6vw + 12px, 26px);
+      margin: 0 0 8px;
+    }
+    .forgot-desc{
+      color:#6A7780;
+      font-size: clamp(13px, .4vw + 12px, 16px);
+      margin: 0 0 18px;
+    }
+    .notice{
+      background:#F4F8F2;
+      border:1px solid #E5F0D0;
+      color:#3D4B2A;
+      padding:10px 12px;
+      border-radius:8px;
+      font-size: 13px;
+      margin-bottom:14px;
+      display:none; /* JS will show this on submit */
+    }
+    .actions{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-top: 12px;
+    }
+    .btn-secondary{
+      background:#EFF3F4;
+      color:#1B2A30;
+      border:1px solid var(--stroke);
+      height: clamp(34px, 1.6vw + 16px, 42px);
+      padding: 0 14px;
+      border-radius: 6px;
+      font-weight:600;
+      cursor:pointer;
+    }
+    .btn-secondary:hover{ background:#E8EEF0; }
+    .email-help{
+      font-size:12px; color:#54646E; margin-top:8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="site-header">
+  <!-- Left: PHOENIX CONTACT logo -->
+  <a class="brand" href="#" aria-label="Phoenix Contact Home">
+    <img
+      src="C:\Users\egrlaf\Desktop\internal transitions\assets\logo.svg"      
+      alt="PHOENIX CONTACT"
+      class="brand__logo"
+      height="28"
+    />
+  </a>
+
+  <!-- Internal Transitions wordmark (kept, recolored by CSS) -->
+  <div class="internal-transitions">
+    <span class="emp">Internal</span>
+    <span class="con">Transitions</span>
+  </div>
+</header>
+
+  <main class="forgot-wrap">
+    <section class="forgot-card" role="form" aria-labelledby="forgotTitle">
+      <h1 id="forgotTitle">Forgot Password</h1>
+      <p class="forgot-desc">Enter the email address associated with your account. We’ll send a link to reset your password.</p>
+
+      <div id="info" class="notice" role="status" aria-live="polite"></div>
+
+      <form id="forgotForm" novalidate>
+        <label class="label" for="email">Email address</label>
+        <div class="field">
+          <input id="email" name="email" type="email" placeholder="you@company.co.in" required autocomplete="email"/>
+        </div>
+
+        <p class="email-help">Use your company email if you’re an internal user.</p>
+
+        <div class="actions">
+          <button type="submit" class="btn-primary">Back to login</button>
+          <button type="submit" class="btn-primary">Send Email</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    (function(){
+      const form = document.getElementById('forgotForm');
+      const email = document.getElementById('email');
+      const info = document.getElementById('info');
+
+      function showMessage(html, ok=true){
+        info.style.display = 'block';
+        info.style.borderColor = ok ? '#E5F0D0' : '#F2C6C6';
+        info.style.background = ok ? '#F4F8F2' : '#FFF3F3';
+        info.style.color = ok ? '#2D3A1E' : '#7B2C2C';
+        info.innerHTML = html;
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const value = email.value.trim();
+        email.style.borderColor = '#E2E8EF';
+
+        if(!value){
+          email.style.borderColor = '#E86A6A';
+          showMessage('Please enter your email address.', false);
+          email.focus();
+          return;
+        }
+        // Simple email pattern
+        const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        if(!ok){
+          email.style.borderColor = '#E86A6A';
+          showMessage('That doesn’t look like a valid email address.', false);
+          return;
+        }
+
+        /* -----------------------------
+           OPTION A (front-end demo): Show success immediately
+           ----------------------------- */
+        showMessage(`If an account exists for <b>${value}</b>, a reset link has been sent. Check your inbox (and spam).`);
+
+        /* -----------------------------
+           OPTION B (real email): call your backend endpoint
+           Uncomment and point to your API (see server sample below)
+        ------------------------------ */
+        /*
+        try{
+          const res = await fetch('/api/send-reset', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: value })
+          });
+          if(!res.ok) throw new Error('Network response was not ok');
+          showMessage('Email sent! Check your inbox for the reset link.');
+        }catch(err){
+          console.error(err);
+          showMessage('We could not send the email right now. Please try again later.', false);
+        }
+        */
+      });
+    })();
+  </script>
+</body>
+</html>

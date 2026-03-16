@@ -1,0 +1,258 @@
+/* ===========================
+   Brand palette & tokens
+   =========================== */
+:root{
+  /* Primary palette */
+  --green: #96BE0D;    /* Phoenix green */
+  --blue:  #007982;    /* dark blue/teal */
+  --white: #FFFFFF;
+  --black: #000000;
+
+  /* UI tokens */
+  --bg: #F3F7F5;       /* soft, almost white */
+  --card: var(--white);
+  --ink: var(--black);
+  --ink-2: #4D5A61;
+  --stroke: #E2E8EF;
+  --shadow: 0 20px 40px rgba(0, 121, 130, .12), 0 6px 14px rgba(0, 121, 130, .08);
+
+  /* Map to old names for convenience */
+  --brand-blue: var(--blue);
+  --brand-teal: var(--green);
+  --brand-teal-600: #7FA50B;
+
+  --radius-lg: 16px;
+  --radius-md: 10px;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body{
+  margin:0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  line-height: 1.35;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Background leaves */
+.bg-leaves{
+  position: fixed;
+  z-index: 0;
+  width: clamp(180px, 18vw, 320px);
+  height: auto;
+  opacity: .95;
+  pointer-events: none;
+}
+.bg-leaves--left{ left: max(-16px, -2vw); bottom: 0; }
+.bg-leaves--right{ right: max(-16px, -2vw); bottom: 0; transform: scaleX(-1); }
+
+/* Page wrapper (edge-to-edge with responsive gutters) */
+.page{
+  position: relative;
+  z-index: 1;
+  width: 100vw;
+  margin: 0;
+  padding: clamp(16px, 2.4vw, 40px);
+}
+
+/* Header */
+.site-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom: clamp(8px, 1.4vw, 16px);
+}
+.brand__logo{
+  display:block;
+  height: clamp(26px, 2.2vw + 10px, 40px);
+  width:auto;
+}
+.employee-connect{
+  font-family: Poppins, Inter, Arial, sans-serif;
+  font-weight: 700;
+  letter-spacing: .02em;
+  text-align: right;
+}
+.employee-connect .emp{
+  color: var(--brand-blue);
+  font-style: italic;
+  display:block;
+  font-size: clamp(18px, 1.2vw + 8px, 24px);
+  line-height: 1;
+}
+.employee-connect .con{
+  color: var(--brand-teal);
+  font-style: italic;
+  display:block;
+  margin-top: 2px;
+  font-size: clamp(16px, 1vw + 8px, 22px);
+  line-height: 1;
+}
+
+/* Main two-column layout filling the screen */
+.content{
+  display:grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: clamp(28px, 4vw, 64px);
+  align-items: center;
+  min-height: calc(100vh - 120px); /* fill remaining after header */
+}
+
+/* Left column */
+.hero{
+  font-family: Poppins, Inter, Arial, sans-serif;
+  font-weight: 700;
+  color: var(--brand-blue);
+  margin: 18px 0 10px;
+  line-height: 1.15;
+  letter-spacing: .1px;
+  font-size: clamp(30px, 3.2vw + 8px, 48px);
+}
+.subcopy{
+  color: #6A7780;
+  font-size: clamp(13px, 1vw + 10px, 18px);
+  margin: 8px 0 18px;
+}
+.scene{ margin-top: 6px; max-width: clamp(420px, 50vw, 760px); }
+.scene-svg{ width: 100%; height: auto; display:block; }
+
+/* Right column card */
+.card{
+  background: var(--card);
+  border-radius: clamp(14px, 1.1vw, 18px);
+  box-shadow: var(--shadow);
+  padding: clamp(20px, 2.2vw, 28px);
+  width: clamp(320px, 36vw, 480px);
+}
+.card--narrow{ width: clamp(320px, 40vw, 520px); }
+.card-title{
+  margin: 2px 0 14px;
+  font-family: Poppins, Inter, Arial, sans-serif;
+  font-size: clamp(18px, 1.4vw + 12px, 24px);
+  color: var(--brand-blue);
+}
+
+/* Form fields */
+.label{
+  display:block;
+  font-size: 12px;
+  color:#455468;
+  margin-bottom: 6px;
+}
+.field{
+  position: relative;
+  margin-bottom: 14px;
+}
+.field input{
+  width: 100%;
+  height: clamp(36px, 1.8vw + 18px, 44px);
+  padding: 8px 12px;
+  border: 1px solid var(--stroke);
+  border-radius: 6px;
+  background: #FFFFFF;
+  color: var(--ink);
+  font-size: clamp(14px, .4vw + 12px, 16px);
+  outline: none;
+  transition: box-shadow .2s, border-color .2s, background .2s;
+}
+.field input::placeholder{ color:#A4B0BE; }
+.field input:focus{
+  border-color: #63B8BF; /* tint of blue */
+  box-shadow: 0 0 0 3px rgba(0,121,130,.18);
+}
+.field--password .btn-eye{
+  position: absolute;
+  right: 8px; top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  padding: 6px;
+  width: 30px; height: 30px;
+  border-radius: 6px;
+  background: transparent;
+  color: #5F7385;
+  cursor: pointer;
+}
+.field--password .btn-eye:hover{ background: #F2F6FA; }
+
+/* Buttons & links */
+.row{ display:flex; align-items:center; gap: 8px; }
+.row--between{ justify-content: space-between; }
+
+.btn-primary{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width: clamp(120px, 10vw, 160px);
+  height: clamp(34px, 1.6vw + 16px, 42px);
+  margin: 12px 0 8px;
+  background: var(--brand-teal);
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: clamp(14px, .5vw + 12px, 16px);
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(150, 190, 13, .25);
+  transition: transform .05s ease, background .2s ease, box-shadow .2s ease;
+}
+.btn-primary:hover{ background: var(--brand-teal-600); }
+.btn-primary:active{ transform: translateY(1px); }
+
+.btn-secondary{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height: clamp(34px, 1.6vw + 16px, 42px);
+  padding: 0 14px;
+  border-radius: 6px;
+  border: 1px solid var(--stroke);
+  background:#EFF3F4;
+  color:#1B2A30;
+  font-weight:600;
+  cursor:pointer;
+}
+.btn-secondary:hover{ background:#E8EEF0; }
+
+.link-muted{
+  color: var(--brand-blue);
+  font-size: 12px;
+  text-decoration: none;
+}
+.link-muted:hover{ text-decoration: underline; }
+
+/* Notice (used on forgot page) */
+.notice{
+  
+  background:#F4F8F2;
+  border:1px solid #E5F0D0;
+  color:#2D3A1E;
+  padding:10px 12px;
+  border-radius:8px;
+  font-size: 13px;
+  margin-bottom:14px;
+}
+
+/* Centered single-column layout (Forgot page) */
+.single-center{
+  min-height: calc(100vh - 120px);
+  display:grid;
+  place-items:center;
+}
+
+/* Responsive stacking */
+@media (max-width: 1024px){
+  .content{
+    grid-template-columns: 1fr;
+  }
+  .right{ order: 2; }
+  .left{ order: 1; }
+  .bg-leaves--right{ display:none; }
+}
+@media (max-width: 560px){
+  .card{ padding: 20px; border-radius: 14px; }
+  .employee-connect .emp{ font-size: 18px; }
+  .employee-connect .con{ font-size: 16px; }
+}
