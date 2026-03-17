@@ -35,13 +35,17 @@ body{
   line-height: 1.35;
   overflow-x: hidden;
   min-height: 100svh;
+  -webkit-text-size-adjust: 100%; /* Prevent text size adjustment on landscape iOS */
+  -webkit-tap-highlight-color: rgba(0,0,0,.1); /* Smooth tap color for mobile */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Background leaves */
 .bg-leaves{
   position: fixed;
   z-index: 0;
-  width: clamp(180px, 18vw, 320px);
+  width: min(180px, 18vw, 320px);
   height: auto;
   opacity: .95;
   pointer-events: none;
@@ -242,7 +246,7 @@ body{
   place-items:center;
 }
 
-/* Responsive stacking */
+/* Responsive stacking - Tablet and down */
 @media (max-width: 1024px){
   .content{
     grid-template-columns: 1fr;
@@ -250,11 +254,212 @@ body{
   .right{ order: 2; }
   .left{ order: 1; }
   .bg-leaves--right{ display:none; }
+  .hero{
+    font-size: clamp(24px, 2.8vw + 6px, 40px);
+  }
 }
-@media (max-width: 560px){
-  .card{ padding: 20px; border-radius: 14px; }
-  .employee-connect .emp{ font-size: 18px; }
-  .employee-connect .con{ font-size: 16px; }
+
+/* Medium devices - iPad landscape */
+@media (max-width: 896px){
+  .page{
+    padding: clamp(12px, 1.8vw, 32px);
+  }
+  .site-header{
+    margin-bottom: clamp(6px, 1vw, 14px);
+  }
+  .card{
+    width: clamp(300px, 90vw, 440px);
+  }
+  .scene{
+    max-width: clamp(280px, 80vw, 600px);
+  }
+}
+
+/* Small tablets */
+@media (max-width: 768px){
+  .content{
+    min-height: auto;
+    gap: clamp(16px, 3vw, 32px);
+    margin-top: 20px;
+  }
+  .scene{
+    max-width: clamp(200px, 75vw, 500px);
+    margin-top: 16px;
+  }
+  .hero{
+    font-size: clamp(22px, 2.5vw, 36px);
+    margin: 12px 0 8px;
+  }
+  .subcopy{
+    font-size: clamp(12px, 0.9vw, 16px);
+  }
+  .card{
+    padding: clamp(16px, 2vw, 24px);
+    width: clamp(280px, 90vw, 420px);
+  }
+  .card-title{
+    font-size: clamp(16px, 1.2vw, 28px);
+  }
+  .label{
+    font-size: 16px;
+  }
+}
+
+/* Mobile phones - Medium */
+@media (max-width: 640px){
+  .page{
+    padding: clamp(14px, 4vw, 28px);
+  }
+  .site-header{
+    margin-bottom: 12px;
+  }
+  .brand__logo{
+    height: clamp(20px, 1.8vw + 8px, 32px);
+  }
+  .it-logo{
+    font-size: clamp(16px, 1.5vw + 8px, 24px);
+    gap: clamp(4px, 0.4vw, 8px);
+  }
+  .hero{
+    font-size: clamp(20px, 2.2vw + 4px, 32px);
+    margin: 10px 0 8px;
+  }
+  .subcopy{
+    font-size: clamp(11px, 0.85vw, 14px);
+    margin: 6px 0 14px;
+  }
+  .scene{
+    max-width: 100%;
+    margin-top: 12px;
+  }
+  .card{
+    padding: clamp(16px, 3vw, 20px);
+    width: 100%;
+    border-radius: 12px;
+  }
+  .card-title{
+    font-size: clamp(16px, 1vw + 14px, 20px);
+    margin: 2px 0 12px;
+  }
+  .label{
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+  .field{
+    margin-bottom: 12px;
+  }
+  .field input{
+    height: clamp(32px, 1.6vw + 16px, 40px);
+    padding: 6px 10px;
+    font-size: 16px; /* Prevent zoom on iOS */
+    border-radius: 6px;
+  }
+  .btn-primary{
+    width: 100%;
+    height: clamp(32px, 1.5vw + 16px, 40px);
+    margin: 8px 0 6px;
+    font-size: 14px;
+  }
+  .btn-secondary{
+    height: clamp(32px, 1.5vw + 16px, 40px);
+    font-size: 13px;
+  }
+}
+
+/* Small mobile phones */
+@media (max-width: 480px){
+  .page{
+    padding: clamp(12px, 3vw, 20px);
+    width: 100vw;
+    margin: 0;
+  }
+  .content{
+    gap: clamp(12px, 2.5vw, 24px);
+  }
+  .bg-leaves--left{
+    width: clamp(100px, 14vw, 140px);
+  }
+  .site-header{
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .brand__logo{
+    height: clamp(18px, 1.6vw + 6px, 28px);
+  }
+  .it-logo{
+    font-size: clamp(14px, 1.2vw + 6px, 20px);
+    text-align: center;
+  }
+  .hero{
+    font-size: clamp(18px, 2vw + 2px, 26px);
+    margin: 8px 0 6px;
+  }
+  .subcopy{
+    font-size: clamp(11px, 0.8vw, 13px);
+    margin: 4px 0 12px;
+  }
+  .scene{
+    margin-top: 8px;
+  }
+  .card{
+    padding: clamp(14px, 2.5vw, 18px);
+  }
+  .card-title{
+    font-size: clamp(14px, 0.9vw + 12px, 18px);
+    margin: 0 0 10px;
+  }
+  .label{
+    font-size: 14px;
+    margin-bottom: 3px;
+  }
+  .field{
+    margin-bottom: 10px;
+  }
+  .field input{
+    height: 36px;
+    padding: 6px 8px;
+    font-size: 16px;
+    border-radius: 5px;
+  }
+  .field--password .btn-eye{
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+  }
+  .btn-primary{
+    width: 100%;
+    height: 36px;
+    margin: 6px 0 4px;
+    font-size: 13px;
+  }
+  .row{
+    gap: 6px;
+  }
+  .row--between{
+    flex-direction: column;
+    align-items: center;
+  }
+  .link-muted{
+    font-size: 11px;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 360px){
+  .page{
+    padding: 8px 12px;
+  }
+  .hero{
+    font-size: clamp(16px, 1.8vw, 22px);
+  }
+  .card{
+    padding: 12px;
+  }
+  .field input{
+    height: 34px;
+    font-size: 16px;
+  }
 }
 
 /* Load a bold, geometric font (Poppins 800) */
