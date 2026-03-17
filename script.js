@@ -9,7 +9,7 @@ if (eyeBtn && password) {
     password.type = visible ? 'text' : 'password';
     eyeBtn.setAttribute('aria-label', visible ? 'Hide password' : 'Show password');
     // swap eye icon style (stroke width tweak)
-    eyeBtn.style.color = visible ? '#2E3A8C' : '#5F7385';
+    eyeBtn.style.color = visible ? '#007982' : '#000000';
   });
 }
 
@@ -26,11 +26,11 @@ form?.addEventListener('submit', (e) => {
   if (!pwd.value.trim()) invalid.push('Password is required.');
 
   // clear previous styles
-  [emp, pwd].forEach(i => i.style.borderColor = '#E1E5EE');
+  [emp, pwd].forEach(i => i.style.borderColor = '#007982');
 
   if (invalid.length) {
     [emp, pwd].forEach(i => {
-      if (!i.value.trim()) i.style.borderColor = '#E86A6A';
+      if (!i.value.trim()) i.style.borderColor = '#007982';
     });
     alert(invalid.join('\n'));
     return;
