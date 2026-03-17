@@ -2,24 +2,24 @@
    Brand palette & tokens
    =========================== */
 :root{
-  /* Primary palette - 4 colors only */
+  /* Primary palette */
   --green: #96BE0D;    /* Phoenix green */
   --blue:  #007982;    /* dark blue/teal */
   --white: #FFFFFF;
   --black: #000000;
 
-  /* UI tokens - using only the 4 primary colors */
-  --bg: var(--white);  /* background is white */
+  /* UI tokens */
+  --bg: #ffffff;       /* soft, almost white */
   --card: var(--white);
   --ink: var(--black);
-  --ink-2: var(--black);
-  --stroke: var(--blue); /* borders use blue */
+  --ink-2: #4D5A61;
+  --stroke: #E2E8EF;
   --shadow: 0 20px 40px rgba(0, 121, 130, .12), 0 6px 14px rgba(0, 121, 130, .08);
 
   /* Map to old names for convenience */
   --brand-blue: var(--blue);
   --brand-teal: var(--green);
-  --brand-teal-600: var(--green);
+  --brand-teal-600: #7FA50B;
 
   --radius-lg: 16px;
   --radius-md: 10px;
@@ -112,7 +112,7 @@ body{
   font-size: clamp(30px, 3.2vw + 8px, 48px);
 }
 .subcopy{
-  color: var(--black);
+  color: #6A7780;
   font-size: clamp(13px, 1vw + 10px, 18px);
   margin: 8px 0 18px;
 }
@@ -139,7 +139,7 @@ body{
 .label{
   display:block;
   font-size: 12px;
-  color: var(--black);
+  color:#455468;
   margin-bottom: 6px;
 }
 .field{
@@ -150,7 +150,7 @@ body{
   width: 100%;
   height: clamp(36px, 1.8vw + 18px, 44px);
   padding: 8px 12px;
-  border: 1px solid var(--blue);
+  border: 1px solid var(--stroke);
   border-radius: 6px;
   background: #FFFFFF;
   color: var(--ink);
@@ -158,10 +158,10 @@ body{
   outline: none;
   transition: box-shadow .2s, border-color .2s, background .2s;
 }
-.field input::placeholder{ color: var(--black); }
+.field input::placeholder{ color:#A4B0BE; }
 .field input:focus{
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(0, 121, 130, .18);
+  border-color: #63B8BF; /* tint of blue */
+  box-shadow: 0 0 0 3px rgba(0,121,130,.18);
 }
 .field--password .btn-eye{
   position: absolute;
@@ -172,10 +172,10 @@ body{
   width: 30px; height: 30px;
   border-radius: 6px;
   background: transparent;
-  color: var(--black);
+  color: #5F7385;
   cursor: pointer;
 }
-.field--password .btn-eye:hover{ background: var(--white); }
+.field--password .btn-eye:hover{ background: #F2F6FA; }
 
 /* Buttons & links */
 .row{ display:flex; align-items:center; gap: 8px; }
@@ -188,8 +188,8 @@ body{
   width: clamp(120px, 10vw, 160px);
   height: clamp(34px, 1.6vw + 16px, 42px);
   margin: 12px 0 8px;
-  background: var(--green);
-  color: var(--white);
+  background: var(--brand-teal);
+  color: #fff;
   border: 0;
   border-radius: 6px;
   font-weight: 600;
@@ -198,7 +198,7 @@ body{
   box-shadow: 0 6px 12px rgba(150, 190, 13, .25);
   transition: transform .05s ease, background .2s ease, box-shadow .2s ease;
 }
-.btn-primary:hover{ background: var(--green); }
+.btn-primary:hover{ background: var(--brand-teal-600); }
 .btn-primary:active{ transform: translateY(1px); }
 
 .btn-secondary{
@@ -208,13 +208,13 @@ body{
   height: clamp(34px, 1.6vw + 16px, 42px);
   padding: 0 14px;
   border-radius: 6px;
-  border: 1px solid var(--blue);
-  background: var(--white);
-  color: var(--black);
+  border: 1px solid var(--stroke);
+  background:#EFF3F4;
+  color:#1B2A30;
   font-weight:600;
   cursor:pointer;
 }
-.btn-secondary:hover{ background: var(--white); }
+.btn-secondary:hover{ background:#E8EEF0; }
 
 .link-muted{
   color: var(--brand-blue);
@@ -225,10 +225,10 @@ body{
 
 /* Notice (used on forgot page) */
 .notice{
-  
-  background: var(--white);
-  border: 1px solid var(--green);
-  color: var(--black);
+
+  background:#F4F8F2;
+  border:1px solid #E5F0D0;
+  color:#2D3A1E;
   padding:10px 12px;
   border-radius:8px;
   font-size: 13px;
@@ -255,4 +255,30 @@ body{
   .card{ padding: 20px; border-radius: 14px; }
   .employee-connect .emp{ font-size: 18px; }
   .employee-connect .con{ font-size: 16px; }
+}
+
+/* Load a bold, geometric font (Poppins 800) */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&display=swap');
+
+.it-logo{
+  font-family: Poppins, Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  /* Big, scalable size that adapts to screen */
+  font-size: clamp(22px, 1.8vw + 10px, 40px);
+  font-weight: 800;               /* THICK */
+  letter-spacing: 0.3px;          /* compact tracking; adjust if needed */
+  line-height: 1;
+  display: inline-flex;
+  align-items: baseline;
+  gap: clamp(6px, 0.5vw, 12px);   /* spacing between the two words */
+  user-select: none;              /* feels like a logo */
+  white-space: nowrap;
+}
+
+.it-logo .it-1{ color: #007982; }  /* dark blue */
+.it-logo .it-2{ color: #96BE0D; }  /* green */
+
+/* Optional subtle lift so it looks like a mark */
+.it-logo{
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
 }
