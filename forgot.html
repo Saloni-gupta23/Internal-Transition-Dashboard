@@ -6,7 +6,7 @@
   <title>Forgot Password</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css"/>
   <style>
     /* Page-specific tweaks that keep your palette */
@@ -30,14 +30,14 @@
       margin: 0 0 8px;
     }
     .forgot-desc{
-      color: var(--black);
+      color:#6A7780;
       font-size: clamp(13px, .4vw + 12px, 16px);
       margin: 0 0 18px;
     }
     .notice{
-      background: var(--white);
-      border: 1px solid var(--green);
-      color: var(--black);
+      background:#F4F8F2;
+      border:1px solid #E5F0D0;
+      color:#3D4B2A;
       padding:10px 12px;
       border-radius:8px;
       font-size: 13px;
@@ -52,18 +52,18 @@
       margin-top: 12px;
     }
     .btn-secondary{
-      background: var(--white);
-      color: var(--black);
-      border: 1px solid var(--blue);
+      background:#EFF3F4;
+      color:#1B2A30;
+      border:1px solid var(--stroke);
       height: clamp(34px, 1.6vw + 16px, 42px);
       padding: 0 14px;
       border-radius: 6px;
       font-weight:600;
       cursor:pointer;
     }
-    .btn-secondary:hover{ background: var(--white); }
+    .btn-secondary:hover{ background:#E8EEF0; }
     .email-help{
-      font-size:12px; color: var(--black); margin-top:8px;
+      font-size:12px; color:#54646E; margin-top:8px;
     }
   </style>
 </head>
@@ -81,10 +81,10 @@
   </a>
 
   <!-- Internal Transitions wordmark (kept, recolored by CSS) -->
-  <div class="internal-transitions">
-    <span class="emp">Internal</span>
-    <span class="con">Transitions</span>
-  </div>
+  <div class="it-logo" aria-label="Internal Transitions">
+  <span class="it-1">Internal</span>
+  <span class="it-2">Transitions</span>
+</div>
 </header>
 
   <main class="forgot-wrap">
@@ -118,9 +118,9 @@
 
       function showMessage(html, ok=true){
         info.style.display = 'block';
-        info.style.borderColor = ok ? '#96BE0D' : '#007982';
-        info.style.background = ok ? '#FFFFFF' : '#FFFFFF';
-        info.style.color = ok ? '#000000' : '#000000';
+        info.style.borderColor = ok ? '#E5F0D0' : '#F2C6C6';
+        info.style.background = ok ? '#F4F8F2' : '#FFF3F3';
+        info.style.color = ok ? '#2D3A1E' : '#7B2C2C';
         info.innerHTML = html;
       }
 
@@ -128,10 +128,10 @@
         e.preventDefault();
 
         const value = email.value.trim();
-        email.style.borderColor = '#007982';
+        email.style.borderColor = '#E2E8EF';
 
         if(!value){
-          email.style.borderColor = '#007982';
+          email.style.borderColor = '#E86A6A';
           showMessage('Please enter your email address.', false);
           email.focus();
           return;
@@ -139,8 +139,8 @@
         // Simple email pattern
         const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
         if(!ok){
-          email.style.borderColor = '#007982';
-          showMessage("That doesn't look like a valid email address.", false);
+          email.style.borderColor = '#E86A6A';
+          showMessage('That doesn’t look like a valid email address.', false);
           return;
         }
 
