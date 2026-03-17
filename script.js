@@ -42,7 +42,7 @@ form?.addEventListener('submit', (e) => {
 });
 
 // Forgot password demo
-document.getElementById('forgotLink')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  alert('Forgot Password (demo): connect this link to your recovery flow.');
-});
+// document.getElementById('forgotLink')?.addEventListener('click', (e) => {
+//   e.preventDefault();
+//   alert('Forgot Password (demo): connect this link to your recovery flow.');
+// });
