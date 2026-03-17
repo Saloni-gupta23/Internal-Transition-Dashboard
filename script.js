@@ -1,17 +1,44 @@
-// Password visibility toggle
+// Password visibility toggle (eye open ↔ eye slash)
 const password = document.getElementById('password');
 const eyeBtn = document.querySelector('.btn-eye');
 
 if (eyeBtn && password) {
-  let visible = false;
   eyeBtn.addEventListener('click', () => {
-    visible = !visible;
-    password.type = visible ? 'text' : 'password';
-    eyeBtn.setAttribute('aria-label', visible ? 'Hide password' : 'Show password');
-    // swap eye icon style (stroke width tweak)
-    eyeBtn.style.color = visible ? '#007982' : '#000000';
+    const isVisible = eyeBtn.classList.toggle('is-visible');
+    password.type = isVisible ? 'text' : 'password';
+    eyeBtn.setAttribute('aria-label', isVisible ? 'Hide password' : 'Show password');
   });
 }
+
+// ===========================
+// Dark mode toggle
+// ===========================
+(function () {
+  const toggle = document.getElementById('darkToggle');
+  const STORAGE_KEY = 'dark-mode';
+
+  // Apply saved preference on load (before paint)
+  function applyPreference() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === 'on') {
+      document.body.classList.add('dark-mode');
+    } else if (saved === 'off') {
+      document.body.classList.remove('dark-mode');
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      // Follow OS preference if no manual choice was saved
+      document.body.classList.add('dark-mode');
+    }
+  }
+
+  applyPreference();
+
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      const isDark = document.body.classList.toggle('dark-mode');
+      localStorage.setItem(STORAGE_KEY, isDark ? 'on' : 'off');
+    });
+  }
+})();
 
 // Basic client-side validation demo
 const form = document.getElementById('loginForm');
