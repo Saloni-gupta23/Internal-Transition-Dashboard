@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <meta name="description" content="Forgot Password – Reset your Internal Transitions account password." />
-  <meta name="theme-color" content="#007982" />
   <title>Forgot Password</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -16,24 +15,26 @@
       display:grid;
       place-items:center;
       min-height:100vh;
-      padding: clamp(16px, 2.2vw, 40px);
+      min-height:100svh;
+      padding: clamp(12px, 3vw, 40px);
     }
     .forgot-card{
       background: var(--card);
       border-radius: clamp(14px, 1.2vw, 18px);
-      width: clamp(320px, 40vw, 520px);
+      width: 100%;
+      max-width: 520px;
       box-shadow: var(--shadow);
-      padding: clamp(20px, 2.2vw, 28px);
+      padding: clamp(16px, 3vw, 28px);
     }
     .forgot-card h1{
       font-family: Poppins, Inter, sans-serif;
       color: var(--brand-blue);
-      font-size: clamp(20px, 1.6vw + 12px, 26px);
+      font-size: clamp(20px, 4vw, 26px);
       margin: 0 0 8px;
     }
     .forgot-desc{
       color:#6A7780;
-      font-size: clamp(13px, .4vw + 12px, 16px);
+      font-size: clamp(13px, 2.5vw, 16px);
       margin: 0 0 18px;
     }
     .notice{
@@ -52,6 +53,7 @@
       justify-content:space-between;
       gap:12px;
       margin-top: 12px;
+      flex-wrap: wrap;
     }
     .btn-secondary{
       background:#EFF3F4;
@@ -65,7 +67,24 @@
     }
     .btn-secondary:hover{ background:#E8EEF0; }
     .email-help{
-      font-size:12px; color:#54646E; margin-top:8px;
+      font-size: clamp(11px, 2.5vw, 12px); color:#54646E; margin-top:8px;
+    }
+
+    /* Mobile forgot page */
+    @media (max-width: 640px) {
+      .forgot-wrap { padding: 12px; }
+      .forgot-card { padding: 14px; border-radius: 12px; }
+      .actions {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .actions .btn-primary {
+        width: 100%;
+      }
+    }
+    @media (max-width: 480px) {
+      .forgot-card { padding: 12px; }
+      .forgot-card h1 { font-size: clamp(18px, 5vw, 24px); }
     }
   </style>
 </head>
@@ -83,10 +102,30 @@
   </a>
 
   <!-- Internal Transitions wordmark (kept, recolored by CSS) -->
-  <div class="it-logo" aria-label="Internal Transitions">
-  <span class="it-1">Internal</span>
-  <span class="it-2">Transitions</span>
-</div>
+  <div class="header-right">
+    <div class="it-logo" aria-label="Internal Transitions">
+      <span class="it-1">Internal</span>
+      <span class="it-2">Transitions</span>
+    </div>
+
+    <!-- Dark mode toggle -->
+    <button class="btn-darkmode" id="darkToggle" type="button" aria-label="Toggle dark mode">
+      <svg class="icon-sun" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    </button>
+  </div>
 </header>
 
   <main class="forgot-wrap">
@@ -113,6 +152,24 @@
   </main>
 
   <script>
+    // Dark mode toggle
+    (function () {
+      const toggle = document.getElementById('darkToggle');
+      const STORAGE_KEY = 'dark-mode';
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved === 'on') {
+        document.body.classList.add('dark-mode');
+      } else if (saved !== 'off' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark-mode');
+      }
+      if (toggle) {
+        toggle.addEventListener('click', () => {
+          const isDark = document.body.classList.toggle('dark-mode');
+          localStorage.setItem(STORAGE_KEY, isDark ? 'on' : 'off');
+        });
+      }
+    })();
+
     (function(){
       const form = document.getElementById('forgotForm');
       const email = document.getElementById('email');
