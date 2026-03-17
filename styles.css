@@ -104,6 +104,10 @@ body {
   margin-bottom: clamp(8px, 1.4vw, 16px);
 }
 
+.brand {
+  margin-left: clamp(-10px, -0.8vw, -4px);
+}
+
 .brand__logo {
   display: block;
   height: clamp(26px, 2.2vw + 10px, 40px);
@@ -425,6 +429,10 @@ body.dark-mode {
   --ink-2: #A0ADB8;
   --stroke: #2C3640;
   --shadow: 0 20px 40px rgba(0, 0, 0, .4), 0 6px 14px rgba(0, 0, 0, .25);
+}
+
+body.dark-mode .logo-text {
+  fill: #FFFFFF;
 }
 
 body.dark-mode .hero {
