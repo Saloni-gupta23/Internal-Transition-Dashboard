@@ -1,82 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes" />
-  <meta name="description" content="Internal Transitions – Streamlining service transitions with clear, controlled management." />
-  <meta name="theme-color" content="#007982" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description"
+    content="Internal Transitions – Streamlining service transitions with clear, controlled management." />
   <title>Internal Transitions – Login</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Fonts similar to the screenshot -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
   <!-- Decorative background leaves (left & right) -->
   <svg class="bg-leaves bg-leaves--left" viewBox="0 0 220 320" aria-hidden="true">
     <defs>
       <linearGradient id="leafGradL" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#78B7BE"/>
-        <stop offset="100%" stop-color="#4C9AA3"/>
+        <stop offset="0%" stop-color="#78B7BE" />
+        <stop offset="100%" stop-color="#4C9AA3" />
       </linearGradient>
     </defs>
     <!-- pot -->
-    <ellipse cx="86" cy="292" rx="72" ry="14" fill="#D6D3E5" opacity=".5"/>
+    <ellipse cx="86" cy="292" rx="72" ry="14" fill="#D6D3E5" opacity=".5" />
     <g transform="translate(36,210)">
-      <rect x="0" y="0" width="100" height="74" rx="10" fill="#EB8E3A"/>
-      <rect x="0" y="10" width="100" height="12" rx="6" fill="#CD7C2D"/>
+      <rect x="0" y="0" width="100" height="74" rx="10" fill="#EB8E3A" />
+      <rect x="0" y="10" width="100" height="12" rx="6" fill="#CD7C2D" />
     </g>
     <!-- leaves -->
-    <path d="M40 200c-30-35-28-78 12-110 9 36 11 73-12 110z" fill="url(#leafGradL)"/>
-    <path d="M72 205c-20-28-18-60 16-92 9 31 9 62-16 92z" fill="url(#leafGradL)"/>
-    <path d="M18 210c-18-22-16-49 14-74 7 26 7 50-14 74z" fill="url(#leafGradL)"/>
-    <path d="M104 210c22-30 20-65-18-100-10 34-10 67 18 100z" fill="url(#leafGradL)"/>
+    <path d="M40 200c-30-35-28-78 12-110 9 36 11 73-12 110z" fill="url(#leafGradL)" />
+    <path d="M72 205c-20-28-18-60 16-92 9 31 9 62-16 92z" fill="url(#leafGradL)" />
+    <path d="M18 210c-18-22-16-49 14-74 7 26 7 50-14 74z" fill="url(#leafGradL)" />
+    <path d="M104 210c22-30 20-65-18-100-10 34-10 67 18 100z" fill="url(#leafGradL)" />
   </svg>
 
   <svg class="bg-leaves bg-leaves--right" viewBox="0 0 220 320" aria-hidden="true">
     <defs>
       <linearGradient id="leafGradR" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#78B7BE"/>
-        <stop offset="100%" stop-color="#4C9AA3"/>
+        <stop offset="0%" stop-color="#78B7BE" />
+        <stop offset="100%" stop-color="#4C9AA3" />
       </linearGradient>
     </defs>
     <!-- pot -->
-    <ellipse cx="134" cy="292" rx="72" ry="14" fill="#D6D3E5" opacity=".5"/>
+    <ellipse cx="134" cy="292" rx="72" ry="14" fill="#D6D3E5" opacity=".5" />
     <g transform="translate(84,210)">
-      <rect x="0" y="0" width="100" height="74" rx="10" fill="#EB8E3A"/>
-      <rect x="0" y="10" width="100" height="12" rx="6" fill="#CD7C2D"/>
+      <rect x="0" y="0" width="100" height="74" rx="10" fill="#EB8E3A" />
+      <rect x="0" y="10" width="100" height="12" rx="6" fill="#CD7C2D" />
     </g>
     <!-- leaves -->
-    <path d="M180 200c30-35 28-78-12-110-9 36-11 73 12 110z" fill="url(#leafGradR)"/>
-    <path d="M148 205c20-28 18-60-16-92-9 31-9 62 16 92z" fill="url(#leafGradR)"/>
-    <path d="M202 210c18-22 16-49-14-74-7 26-7 50 14 74z" fill="url(#leafGradR)"/>
-    <path d="M116 210c-22-30-20-65 18-100 10 34 10 67-18 100z" fill="url(#leafGradR)"/>
+    <path d="M180 200c30-35 28-78-12-110-9 36-11 73 12 110z" fill="url(#leafGradR)" />
+    <path d="M148 205c20-28 18-60-16-92-9 31-9 62 16 92z" fill="url(#leafGradR)" />
+    <path d="M202 210c18-22 16-49-14-74-7 26-7 50 14 74z" fill="url(#leafGradR)" />
+    <path d="M116 210c-22-30-20-65 18-100 10 34 10 67-18 100z" fill="url(#leafGradR)" />
   </svg>
 
   <!-- Page wrap -->
   <div class="page">
     <!-- Header with two logos (recreated as clean vector/type) -->
     <header class="site-header">
-  <!-- Left: PHOENIX CONTACT logo -->
-  <a class="brand" href="#" aria-label="Phoenix Contact Home">
-    <img
-      src="assets/logo.svg"      
-      alt="PHOENIX CONTACT"
-      class="brand__logo"
-      style="width: auto"
-      height="auto"
-    />
-  </a>
+      <!-- Left: PHOENIX CONTACT logo -->
+      <a class="brand" href="#" aria-label="Phoenix Contact Home">
+        <img src="assets/logo.svg" alt="PHOENIX CONTACT" class="brand__logo" height="auto" />
+      </a>
 
-  <!-- Right: Employee Connect wordmark (kept, recolored by CSS) -->
-  
-<div class="it-logo" aria-label="Internal Transitions">
-  <span class="it-1">Internal</span>
-  <span class="it-2">Transitions</span>
-</div>
+      <!-- Right: Employee Connect wordmark (kept, recolored by CSS) -->
 
-</header>
+      <div class="header-right">
+        <div class="it-logo" aria-label="Internal Transitions">
+          <span class="it-1">Internal</span>
+          <span class="it-2">Transitions</span>
+        </div>
+
+        <!-- Dark mode toggle -->
+        <button class="btn-darkmode" id="darkToggle" type="button" aria-label="Toggle dark mode">
+          <!-- Sun icon (shown in dark mode) -->
+          <svg class="icon-sun" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <!-- Moon icon (shown in light mode) -->
+          <svg class="icon-moon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+
+    </header>
 
     <main class="content">
       <!-- Left column: headline + subtext + phone/person illustration -->
@@ -93,38 +113,38 @@
         <div class="scene">
           <svg class="scene-svg" viewBox="0 0 520 300" aria-hidden="true">
             <!-- ground shadow -->
-            <ellipse cx="180" cy="265" rx="140" ry="18" fill="#D6D3E5" opacity=".7"/>
+            <ellipse cx="180" cy="265" rx="140" ry="18" fill="#D6D3E5" opacity=".7" />
 
             <!-- Phone body -->
             <g transform="translate(70,70)">
-              <rect x="0" y="0" width="150" height="170" rx="6" fill="#1D3862"/>
-              <rect x="12" y="14" width="126" height="142" rx="4" fill="#EAF1F6"/>
-              <rect x="50" y="-5" width="50" height="6" rx="3" fill="#2A4C86" opacity=".7"/>
+              <rect x="0" y="0" width="150" height="170" rx="6" fill="#1D3862" />
+              <rect x="12" y="14" width="126" height="142" rx="4" fill="#EAF1F6" />
+              <rect x="50" y="-5" width="50" height="6" rx="3" fill="#2A4C86" opacity=".7" />
               <!-- simple login lines -->
               <text x="48" y="56" font-family="Inter, Arial" font-size="10" fill="#7B8BA3">USER LOGIN</text>
-              <rect x="36" y="70" width="78" height="10" rx="5" fill="#D5DEE8"/>
-              <rect x="36" y="92" width="78" height="10" rx="5" fill="#D5DEE8"/>
-              <rect x="48" y="116" width="56" height="14" rx="7" fill="#60A5B2"/>
+              <rect x="36" y="70" width="78" height="10" rx="5" fill="#D5DEE8" />
+              <rect x="36" y="92" width="78" height="10" rx="5" fill="#D5DEE8" />
+              <rect x="48" y="116" width="56" height="14" rx="7" fill="#60A5B2" />
             </g>
 
             <!-- Pointer cursor on phone -->
             <g transform="translate(135,152) rotate(8)">
-              <polygon points="0,0 28,60 36,48 52,92 62,88 46,44 60,36" fill="#102544"/>
-              <polygon points="0,0 28,60 36,48" fill="#C6D3E1"/>
+              <polygon points="0,0 28,60 36,48 52,92 62,88 46,44 60,36" fill="#102544" />
+              <polygon points="0,0 28,60 36,48" fill="#C6D3E1" />
             </g>
 
             <!-- Human silhouette next to phone -->
             <g transform="translate(230,86)">
-              <ellipse cx="80" cy="169" rx="80" ry="14" fill="#D6D3E5" opacity=".7"/>
-              <path d="M64 58c10 0 20 10 22 24l10 86H48l10-86c2-14 12-24 22-24z" fill="#1E2E40"/>
-              <circle cx="75" cy="38" r="18" fill="#C27D5C"/>
-              <rect x="55" y="62" width="42" height="66" rx="20" fill="#D84E46"/>
-              <rect x="36" y="104" width="26" height="70" rx="10" fill="#1E2E40"/>
-              <rect x="99" y="104" width="26" height="70" rx="10" fill="#1E2E40"/>
-              <rect x="40" y="174" width="30" height="8" rx="4" fill="#1E2E40"/>
-              <rect x="100" y="174" width="30" height="8" rx="4" fill="#1E2E40"/>
+              <ellipse cx="80" cy="169" rx="80" ry="14" fill="#D6D3E5" opacity=".7" />
+              <path d="M64 58c10 0 20 10 22 24l10 86H48l10-86c2-14 12-24 22-24z" fill="#1E2E40" />
+              <circle cx="75" cy="38" r="18" fill="#C27D5C" />
+              <rect x="55" y="62" width="42" height="66" rx="20" fill="#D84E46" />
+              <rect x="36" y="104" width="26" height="70" rx="10" fill="#1E2E40" />
+              <rect x="99" y="104" width="26" height="70" rx="10" fill="#1E2E40" />
+              <rect x="40" y="174" width="30" height="8" rx="4" fill="#1E2E40" />
+              <rect x="100" y="174" width="30" height="8" rx="4" fill="#1E2E40" />
               <!-- phone in hand -->
-              <rect x="114" y="98" width="20" height="28" rx="4" fill="#2A4C86"/>
+              <rect x="114" y="98" width="20" height="28" rx="4" fill="#2A4C86" />
             </g>
 
             <!-- Soft circle backdrop -->
@@ -141,17 +161,27 @@
           <form id="loginForm" novalidate>
             <label class="label" for="empId">Employee ID</label>
             <div class="field">
-              <input id="empId" name="empId" type="text" placeholder="Employee ID" autocomplete="username" required/>
+              <input id="empId" name="empId" type="text" placeholder="Employee ID" autocomplete="username" required />
             </div>
 
             <label class="label" for="password">Password</label>
             <div class="field field--password">
-              <input id="password" name="password" type="password" placeholder="**********" autocomplete="current-password" required/>
+              <input id="password" name="password" type="password" placeholder="**********"
+                autocomplete="current-password" required />
               <button type="button" class="btn-eye" aria-label="Show password">
-                <!-- eye icon -->
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <!-- eye open icon -->
+                <svg class="eye-open" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"></path>
                   <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <!-- eye slash icon (hidden by default) -->
+                <svg class="eye-off" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"></path>
+                  <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"></path>
+                  <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
                 </svg>
               </button>
             </div>
@@ -170,4 +200,5 @@
 
   <script src="script.js"></script>
 </body>
+
 </html>
