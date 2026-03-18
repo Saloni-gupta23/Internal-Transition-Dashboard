@@ -11,55 +11,37 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Fonts similar to the screenshot -->
   <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 
-<body>
-  <!-- Decorative background leaves (left & right) -->
-  <svg class="bg-leaves bg-leaves--left" viewBox="0 0 220 320" aria-hidden="true">
-    <defs>
-      <linearGradient id="leafGradL" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#78B7BE" />
-        <stop offset="100%" stop-color="#4C9AA3" />
-      </linearGradient>
-    </defs>
-    <!-- pot -->
-    <ellipse cx="86" cy="292" rx="72" ry="14" fill="#D6D3E5" opacity=".5" />
-    <g transform="translate(36,210)">
-      <rect x="0" y="0" width="100" height="74" rx="10" fill="#EB8E3A" />
-      <rect x="0" y="10" width="100" height="12" rx="6" fill="#CD7C2D" />
-    </g>
-    <!-- leaves -->
-    <path d="M40 200c-30-35-28-78 12-110 9 36 11 73-12 110z" fill="url(#leafGradL)" />
-    <path d="M72 205c-20-28-18-60 16-92 9 31 9 62-16 92z" fill="url(#leafGradL)" />
-    <path d="M18 210c-18-22-16-49 14-74 7 26 7 50-14 74z" fill="url(#leafGradL)" />
-    <path d="M104 210c22-30 20-65-18-100-10 34-10 67 18 100z" fill="url(#leafGradL)" />
-  </svg>
+<body data-barba="wrapper">
+  <!-- Brand stripe at top -->
+  <div class="brand-stripe" aria-hidden="true"></div>
 
-  <svg class="bg-leaves bg-leaves--right" viewBox="0 0 220 320" aria-hidden="true">
-    <defs>
-      <linearGradient id="leafGradR" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#78B7BE" />
-        <stop offset="100%" stop-color="#4C9AA3" />
-      </linearGradient>
-    </defs>
-    <!-- pot -->
-    <ellipse cx="134" cy="292" rx="72" ry="14" fill="#D6D3E5" opacity=".5" />
-    <g transform="translate(84,210)">
-      <rect x="0" y="0" width="100" height="74" rx="10" fill="#EB8E3A" />
-      <rect x="0" y="10" width="100" height="12" rx="6" fill="#CD7C2D" />
-    </g>
-    <!-- leaves -->
-    <path d="M180 200c30-35 28-78-12-110-9 36-11 73 12 110z" fill="url(#leafGradR)" />
-    <path d="M148 205c20-28 18-60-16-92-9 31-9 62 16 92z" fill="url(#leafGradR)" />
-    <path d="M202 210c18-22 16-49-14-74-7 26-7 50 14 74z" fill="url(#leafGradR)" />
-    <path d="M116 210c-22-30-20-65 18-100 10 34 10 67-18 100z" fill="url(#leafGradR)" />
-  </svg>
+  <!-- Dashboard background decoration -->
+  <div class="bg-decor" aria-hidden="true">
+    <div class="bg-decor__grid"></div>
+    <div class="bg-decor__scanline bg-decor__scanline--1"></div>
+    <div class="bg-decor__scanline bg-decor__scanline--2"></div>
+    <div class="bg-decor__scanline bg-decor__scanline--3"></div>
+    <div class="bg-decor__bracket bg-decor__bracket--tl"></div>
+    <div class="bg-decor__bracket bg-decor__bracket--tr"></div>
+    <div class="bg-decor__bracket bg-decor__bracket--bl"></div>
+    <div class="bg-decor__bracket bg-decor__bracket--br"></div>
+    <div class="bg-decor__crosshair bg-decor__crosshair--1"></div>
+    <div class="bg-decor__crosshair bg-decor__crosshair--2"></div>
+    <div class="bg-decor__node bg-decor__node--1"></div>
+    <div class="bg-decor__node bg-decor__node--2"></div>
+    <div class="bg-decor__node bg-decor__node--3"></div>
+    <div class="bg-decor__node bg-decor__node--4"></div>
+    <div class="bg-decor__node bg-decor__node--5"></div>
+    <div class="bg-decor__node bg-decor__node--6"></div>
+  </div>
 
   <!-- Page wrap -->
-  <div class="page">
+  <div class="page" data-barba="container" data-barba-namespace="login">
     <!-- Header with two logos (recreated as clean vector/type) -->
     <header class="site-header">
       <!-- Left: PHOENIX CONTACT logo -->
@@ -85,7 +67,7 @@
         <!-- Dark mode toggle -->
         <button class="btn-darkmode" id="darkToggle" type="button" aria-label="Toggle dark mode">
           <!-- Sun icon (shown in dark mode) -->
-          <svg class="icon-sun" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <svg class="icon-sun" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="5"></circle>
             <line x1="12" y1="1" x2="12" y2="3"></line>
             <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -97,7 +79,7 @@
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
           </svg>
           <!-- Moon icon (shown in light mode) -->
-          <svg class="icon-moon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <svg class="icon-moon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
           </svg>
         </button>
@@ -113,49 +95,139 @@
           <span>Strengthening Operations.</span>
         </h1>
         <p class="subcopy">
-          Transforming every service shift into a clear, controlled, and effortlessly managed transition.
+          Track and manage degrees of implementation across every department with one platform, full visibility. Better, smoother transitions.
         </p>
 
-        <!-- Phone + character illustration -->
+        <!-- Dashboard illustration -->
         <div class="scene">
           <svg class="scene-svg" viewBox="0 0 520 300" aria-hidden="true">
-            <!-- ground shadow -->
-            <ellipse cx="180" cy="265" rx="140" ry="18" fill="#D6D3E5" opacity=".7" />
+            <!-- Soft ambient glow -->
+            <ellipse cx="240" cy="275" rx="180" ry="14" fill="#000" opacity=".05" />
 
-            <!-- Phone body -->
-            <g transform="translate(70,70)">
-              <rect x="0" y="0" width="150" height="170" rx="6" fill="#1D3862" />
-              <rect x="12" y="14" width="126" height="142" rx="4" fill="#EAF1F6" />
-              <rect x="50" y="-5" width="50" height="6" rx="3" fill="#2A4C86" opacity=".7" />
-              <!-- simple login lines -->
-              <text x="48" y="56" font-family="Inter, Arial" font-size="10" fill="#7B8BA3">USER LOGIN</text>
-              <rect x="36" y="70" width="78" height="10" rx="5" fill="#D5DEE8" />
-              <rect x="36" y="92" width="78" height="10" rx="5" fill="#D5DEE8" />
-              <rect x="48" y="116" width="56" height="14" rx="7" fill="#60A5B2" />
+            <!-- ===== Laptop frame ===== -->
+            <g transform="translate(50,18)">
+              <!-- Screen bezel -->
+              <rect x="0" y="0" width="380" height="210" rx="4" fill="#007982" />
+              <rect x="5" y="5" width="370" height="190" rx="2" fill="#f8fafb" />
+
+              <!-- Top bar -->
+              <rect x="5" y="5" width="370" height="22" rx="2" fill="#edf1f4" />
+              <rect x="14" y="13" width="6" height="6" rx="1" fill="#E86A6A" opacity=".55" />
+              <rect x="24" y="13" width="6" height="6" rx="1" fill="#f5c242" opacity=".55" />
+              <rect x="34" y="13" width="6" height="6" rx="1" fill="#96BE0D" opacity=".55" />
+              <text x="190" y="19" font-family="'Space Mono',monospace" font-size="5.5" fill="#007982" text-anchor="middle" font-weight="700" opacity=".5">TRANSITION DASHBOARD</text>
+
+              <!-- ── Sidebar ── -->
+              <rect x="5" y="27" width="64" height="168" fill="#f0f4f7" />
+              <!-- Sidebar nav items -->
+              <rect x="14" y="38" width="46" height="7" rx="1" fill="#007982" opacity=".12" />
+              <rect x="14" y="52" width="38" height="7" rx="1" fill="#007982" opacity=".08" />
+              <rect x="14" y="66" width="42" height="7" rx="1" fill="#007982" opacity=".08" />
+              <rect x="14" y="80" width="34" height="7" rx="1" fill="#007982" opacity=".08" />
+              <rect x="14" y="100" width="46" height="7" rx="1" fill="#96BE0D" opacity=".18" />
+              <rect x="14" y="114" width="40" height="7" rx="1" fill="#007982" opacity=".08" />
+              <!-- Active indicator -->
+              <rect x="5" y="97" width="3" height="14" fill="#96BE0D" />
+
+              <!-- ── Main content area ── -->
+              <!-- KPI Card 1 -->
+              <rect x="78" y="34" width="88" height="44" rx="2" fill="#fff" stroke="#e4e9ed" stroke-width=".6" />
+              <rect x="78" y="34" width="2" height="44" fill="#007982" opacity=".4" />
+              <text x="88" y="47" font-family="'Space Mono',monospace" font-size="4.5" fill="#8c99a6">TRANSITIONS</text>
+              <text x="88" y="65" font-family="'Space Mono',monospace" font-size="16" fill="#007982" font-weight="700">1,284</text>
+              <!-- Status LED -->
+              <rect x="155" y="38" width="4" height="4" rx="1" fill="#96BE0D" opacity=".6" />
+
+              <!-- KPI Card 2 -->
+              <rect x="174" y="34" width="88" height="44" rx="2" fill="#fff" stroke="#e4e9ed" stroke-width=".6" />
+              <rect x="174" y="34" width="2" height="44" fill="#96BE0D" opacity=".4" />
+              <text x="184" y="47" font-family="'Space Mono',monospace" font-size="4.5" fill="#8c99a6">COMPLETION</text>
+              <text x="184" y="65" font-family="'Space Mono',monospace" font-size="16" fill="#96BE0D" font-weight="700">87%</text>
+              <!-- Status LED -->
+              <rect x="251" y="38" width="4" height="4" rx="1" fill="#96BE0D" opacity=".6" />
+
+              <!-- KPI Card 3 -->
+              <rect x="270" y="34" width="98" height="44" rx="2" fill="#fff" stroke="#e4e9ed" stroke-width=".6" />
+              <rect x="270" y="34" width="2" height="44" fill="#007982" opacity=".4" />
+              <text x="280" y="47" font-family="'Space Mono',monospace" font-size="4.5" fill="#8c99a6">ACTIVE</text>
+              <text x="280" y="65" font-family="'Space Mono',monospace" font-size="16" fill="#007982" font-weight="700">56</text>
+              <!-- Mini sparkline in card 3 -->
+              <polyline points="330,58 336,50 342,54 348,46 354,42 360,48" fill="none" stroke="#96BE0D" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity=".7" />
+
+              <!-- ── Area chart ── -->
+              <rect x="78" y="86" width="184" height="100" rx="2" fill="#fff" stroke="#e4e9ed" stroke-width=".6" />
+              <text x="88" y="99" font-family="'Space Mono',monospace" font-size="5" fill="#8c99a6" font-weight="700">MONTHLY OVERVIEW</text>
+
+              <!-- Dashed grid lines -->
+              <line x1="88" y1="112" x2="254" y2="112" stroke="#edf1f4" stroke-width=".4" stroke-dasharray="3 2" />
+              <line x1="88" y1="132" x2="254" y2="132" stroke="#edf1f4" stroke-width=".4" stroke-dasharray="3 2" />
+              <line x1="88" y1="152" x2="254" y2="152" stroke="#edf1f4" stroke-width=".4" stroke-dasharray="3 2" />
+              <line x1="88" y1="172" x2="254" y2="172" stroke="#edf1f4" stroke-width=".4" stroke-dasharray="3 2" />
+
+              <!-- Y-axis tick marks -->
+              <line x1="85" y1="112" x2="88" y2="112" stroke="#8c99a6" stroke-width=".5" />
+              <line x1="85" y1="132" x2="88" y2="132" stroke="#8c99a6" stroke-width=".5" />
+              <line x1="85" y1="152" x2="88" y2="152" stroke="#8c99a6" stroke-width=".5" />
+              <line x1="85" y1="172" x2="88" y2="172" stroke="#8c99a6" stroke-width=".5" />
+
+              <!-- Area fill -->
+              <path d="M88 170 L108 155 L128 148 L148 138 L168 125 L188 130 L208 118 L228 112 L248 108 L254 108 V172 H88 Z" fill="url(#areaGrad)" />
+              <!-- Line -->
+              <polyline points="88,170 108,155 128,148 148,138 168,125 188,130 208,118 228,112 248,108" fill="none" stroke="#007982" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+              <!-- Data dots -->
+              <rect x="146" y="136" width="4" height="4" fill="#fff" stroke="#007982" stroke-width="1.2" />
+              <rect x="206" y="116" width="4" height="4" fill="#fff" stroke="#007982" stroke-width="1.2" />
+              <rect x="246" y="106" width="4" height="4" fill="#fff" stroke="#96BE0D" stroke-width="1.2" />
+
+              <!-- ── Donut chart panel ── -->
+              <rect x="270" y="86" width="98" height="100" rx="2" fill="#fff" stroke="#e4e9ed" stroke-width=".6" />
+              <text x="280" y="99" font-family="'Space Mono',monospace" font-size="5" fill="#8c99a6" font-weight="700">STATUS</text>
+
+              <!-- Donut -->
+              <circle cx="319" cy="138" r="22" fill="none" stroke="#edf1f4" stroke-width="7" />
+              <circle cx="319" cy="138" r="22" fill="none" stroke="#007982" stroke-width="7" stroke-dasharray="96 42" transform="rotate(-90 319 138)" stroke-linecap="round" />
+              <circle cx="319" cy="138" r="22" fill="none" stroke="#96BE0D" stroke-width="7" stroke-dasharray="28 110" transform="rotate(160 319 138)" stroke-linecap="round" />
+              <text x="319" y="136" font-family="'Space Mono',monospace" font-size="9" fill="#007982" text-anchor="middle" font-weight="700">92%</text>
+              <text x="319" y="145" font-family="'Space Mono',monospace" font-size="4" fill="#8c99a6" text-anchor="middle">ON TRACK</text>
+
+              <!-- Legend dots -->
+              <rect x="284" y="170" width="4" height="4" fill="#007982" />
+              <text x="292" y="175" font-family="'Space Mono',monospace" font-size="4" fill="#8c99a6">Done</text>
+              <rect x="314" y="170" width="4" height="4" fill="#96BE0D" />
+              <text x="322" y="175" font-family="'Space Mono',monospace" font-size="4" fill="#8c99a6">Active</text>
+              <rect x="344" y="170" width="4" height="4" fill="#edf1f4" />
+              <text x="352" y="175" font-family="'Space Mono',monospace" font-size="4" fill="#8c99a6">Queue</text>
             </g>
 
-            <!-- Pointer cursor on phone -->
-            <g transform="translate(135,152) rotate(8)">
-              <polygon points="0,0 28,60 36,48 52,92 62,88 46,44 60,36" fill="#102544" />
-              <polygon points="0,0 28,60 36,48" fill="#C6D3E1" />
+            <!-- Laptop base/keyboard -->
+            <path d="M30 230 L50 228 L430 228 L450 230 L450 234 L30 234 Z" fill="#007982" opacity=".15" />
+            <rect x="140" y="230" width="200" height="2" rx="1" fill="#007982" opacity=".08" />
+
+            <!-- Floating notification badge -->
+            <g transform="translate(440,30)" opacity=".45">
+              <rect x="0" y="0" width="50" height="24" rx="2" fill="#fff" stroke="#e4e9ed" stroke-width=".5" />
+              <rect x="0" y="0" width="2" height="24" fill="#96BE0D" opacity=".5" />
+              <rect x="10" y="8" width="6" height="6" rx="1" fill="#96BE0D" opacity=".3" />
+              <path d="M11.5 11 l1.5 1.5 3-3" fill="none" stroke="#96BE0D" stroke-width="1" stroke-linecap="round" />
+              <rect x="22" y="8" width="22" height="3" rx="1.5" fill="#007982" opacity=".15" />
+              <rect x="22" y="14" width="16" height="2.5" rx="1.2" fill="#007982" opacity=".1" />
             </g>
 
-            <!-- Human silhouette next to phone -->
-            <g transform="translate(230,86)">
-              <ellipse cx="80" cy="169" rx="80" ry="14" fill="#D6D3E5" opacity=".7" />
-              <path d="M64 58c10 0 20 10 22 24l10 86H48l10-86c2-14 12-24 22-24z" fill="#1E2E40" />
-              <circle cx="75" cy="38" r="18" fill="#C27D5C" />
-              <rect x="55" y="62" width="42" height="66" rx="20" fill="#D84E46" />
-              <rect x="36" y="104" width="26" height="70" rx="10" fill="#1E2E40" />
-              <rect x="99" y="104" width="26" height="70" rx="10" fill="#1E2E40" />
-              <rect x="40" y="174" width="30" height="8" rx="4" fill="#1E2E40" />
-              <rect x="100" y="174" width="30" height="8" rx="4" fill="#1E2E40" />
-              <!-- phone in hand -->
-              <rect x="114" y="98" width="20" height="28" rx="4" fill="#2A4C86" />
+            <!-- Floating trending card -->
+            <g transform="translate(445,70)" opacity=".35">
+              <rect x="0" y="0" width="50" height="24" rx="2" fill="#fff" stroke="#e4e9ed" stroke-width=".5" />
+              <rect x="0" y="0" width="2" height="24" fill="#007982" opacity=".5" />
+              <text x="10" y="16" font-family="'Space Mono',monospace" font-size="6" fill="#96BE0D" font-weight="700">+12%</text>
+              <polyline points="36,16 40,10 44,14" fill="none" stroke="#96BE0D" stroke-width="1" stroke-linecap="round" />
             </g>
 
-            <!-- Soft circle backdrop -->
-            <circle cx="225" cy="132" r="66" fill="#E6EDF5" />
+            <!-- Gradient defs -->
+            <defs>
+              <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#007982" stop-opacity=".12" />
+                <stop offset="100%" stop-color="#007982" stop-opacity=".01" />
+              </linearGradient>
+            </defs>
           </svg>
         </div>
       </section>
@@ -164,6 +236,7 @@
       <section class="right">
         <div class="card">
           <h2 class="card-title">Login</h2>
+          <p class="card-subtitle">Welcome back! Sign in to continue.</p>
 
           <form id="loginForm" novalidate>
             <label class="label" for="empId">Employee ID</label>
@@ -205,7 +278,16 @@
     </main>
   </div>
 
-  <script src="script.js"></script>
+  <!-- Wave transition overlay -->
+  <div class="transition-overlay" aria-hidden="true">
+    <svg class="transition-overlay__wave" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <path class="transition-overlay__path" d="M 0 100 V 100 Q 50 100 100 100 V 100 Z" />
+    </svg>
+  </div>
+
+  <!-- Barba.js CDN + page scripts -->
+  <script src="https://unpkg.com/@barba/core@2.10.3/dist/barba.umd.js"></script>
+  <script src="barba-init.js"></script>
 </body>
 
 </html>
