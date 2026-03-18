@@ -11,34 +11,57 @@ if (eyeBtn && password) {
 }
 
 // ===========================
-// Dark mode toggle
+// Interactive background parallax
 // ===========================
 (function () {
-  const toggle = document.getElementById('darkToggle');
-  const STORAGE_KEY = 'dark-mode';
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReduced) return;
 
-  // Apply saved preference on load (before paint)
-  function applyPreference() {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved === 'on') {
-      document.body.classList.add('dark-mode');
-    } else if (saved === 'off') {
-      document.body.classList.remove('dark-mode');
-    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      // Follow OS preference if no manual choice was saved
-      document.body.classList.add('dark-mode');
+  var layers = [
+    { sel: '.bg-decor__blob--teal',   strength: 18 },
+    { sel: '.bg-decor__blob--green',  strength: 14 },
+    { sel: '.bg-decor__blob--accent', strength: 10 },
+    { sel: '.bg-decor__ring--1',      strength: 8 },
+    { sel: '.bg-decor__ring--2',      strength: 12 },
+    { sel: '.bg-decor__corner--tl',   strength: 6 },
+    { sel: '.bg-decor__corner--br',   strength: 6 },
+  ];
+
+  var items = layers.map(function (l) {
+    return { el: document.querySelector(l.sel), s: l.strength };
+  }).filter(function (i) { return i.el; });
+
+  if (!items.length) return;
+
+  var mx = 0, my = 0, cx = 0, cy = 0, raf;
+
+  document.addEventListener('mousemove', function (e) {
+    mx = (e.clientX / window.innerWidth  - 0.5) * 2;
+    my = (e.clientY / window.innerHeight - 0.5) * 2;
+    if (!raf) raf = requestAnimationFrame(lerp);
+  });
+
+  function lerp() {
+    cx += (mx - cx) * 0.06;
+    cy += (my - cy) * 0.06;
+
+    for (var i = 0; i < items.length; i++) {
+      var dx = (cx * items[i].s).toFixed(1);
+      var dy = (cy * items[i].s).toFixed(1);
+      items[i].el.style.setProperty('--px', dx + 'px');
+      items[i].el.style.setProperty('--py', dy + 'px');
+    }
+
+    if (Math.abs(mx - cx) > 0.001 || Math.abs(my - cy) > 0.001) {
+      raf = requestAnimationFrame(lerp);
+    } else {
+      raf = null;
     }
   }
-
-  applyPreference();
-
-  if (toggle) {
-    toggle.addEventListener('click', () => {
-      const isDark = document.body.classList.toggle('dark-mode');
-      localStorage.setItem(STORAGE_KEY, isDark ? 'on' : 'off');
-    });
-  }
 })();
+
+// Dark mode is handled by barba-init.js initDarkMode()
+// Removed from here to prevent double-toggle on pages that load both scripts.
 
 // Basic client-side validation demo
 const form = document.getElementById('loginForm');
@@ -53,23 +76,69 @@ form?.addEventListener('submit', (e) => {
   if (!pwd.value.trim()) invalid.push('Password is required.');
 
   // clear previous styles
-  [emp, pwd].forEach(i => i.style.borderColor = '#007982');
+  [emp, pwd].forEach(i => i.style.borderColor = '');
 
   if (invalid.length) {
     [emp, pwd].forEach(i => {
-      if (!i.value.trim()) i.style.borderColor = '#007982';
+      if (!i.value.trim()) i.style.borderColor = '#E86A6A';
     });
     alert(invalid.join('\n'));
     return;
   }
 
-  // Mock “success”
-  // Replace with your real auth call.
-  alert('Logged in (demo). You can hook this up to your backend.');
+  // Show loading state on button
+  const submitBtn = form.querySelector('.btn-primary');
+  const originalText = submitBtn ? submitBtn.textContent : '';
+
+  if (submitBtn) {
+    submitBtn.classList.add('is-loading');
+    submitBtn.textContent = 'Signing in';
+  }
+
+  // Simulate auth delay, then show success toast
+  setTimeout(() => {
+    if (submitBtn) {
+      submitBtn.classList.remove('is-loading');
+      submitBtn.textContent = originalText;
+    }
+
+    // Show a success toast notification
+    showToast('Signed in successfully!', 'success');
+  }, 1200);
 });
 
-// Forgot password demo
-// document.getElementById('forgotLink')?.addEventListener('click', (e) => {
-//   e.preventDefault();
-//   alert('Forgot Password (demo): connect this link to your recovery flow.');
-// });
+/* ===========================
+   Toast notification system
+   =========================== */
+function showToast(message, type) {
+  // Remove any existing toast
+  const old = document.querySelector('.toast');
+  if (old) old.remove();
+
+  const toast = document.createElement('div');
+  toast.className = 'toast toast--' + (type || 'info');
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
+
+  toast.innerHTML =
+    '<svg class="toast__icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>' +
+      '<polyline points="22 4 12 14.01 9 11.01"></polyline>' +
+    '</svg>' +
+    '<span>' + message + '</span>';
+
+  document.body.appendChild(toast);
+
+  // Trigger entrance animation
+  requestAnimationFrame(function () {
+    toast.classList.add('toast--visible');
+  });
+
+  // Auto-dismiss after 3 seconds
+  setTimeout(function () {
+    toast.classList.add('toast--exit');
+    toast.addEventListener('animationend', function () {
+      toast.remove();
+    });
+  }, 3000);
+}
