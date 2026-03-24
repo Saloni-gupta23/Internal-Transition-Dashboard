@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="description" content="Internal Transitions – Service Dashboard"/>
+  <title>Dashboard – Internal Transitions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    /* ── Dashboard layout ── */
+    .dash{
+      display: flex;
+      min-height: 100vh;
+      min-height: 100svh;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar{
+      width: clamp(220px, 18vw, 280px);
+      background: var(--card);
+      border-right: 1px solid var(--stroke);
+      padding: clamp(18px, 2vw, 28px) 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+      box-shadow: 2px 0 12px rgba(0,0,0,.04);
+    }
+    .sidebar__title{
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--ink-2);
+      padding: 0 clamp(16px, 1.5vw, 24px) 12px;
+      border-bottom: 1px solid var(--stroke);
+      margin-bottom: 8px;
+    }
+
+    .sidebar__tab{
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px clamp(16px, 1.5vw, 24px);
+      cursor: pointer;
+      transition: background .2s, color .2s;
+      border-left: 3px solid transparent;
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(12px, 1.1vw, 14px);
+      font-weight: 700;
+      color: var(--ink);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .sidebar__tab:hover,
+    .sidebar__tab.is-active{
+      background: rgba(0,121,130,.06);
+      border-left-color: var(--brand-blue);
+      color: var(--brand-blue);
+    }
+    .sidebar__tab-icon{
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 4px;
+      background: rgba(0,121,130,.08);
+      flex-shrink: 0;
+      transition: background .2s;
+    }
+    .sidebar__tab:hover .sidebar__tab-icon,
+    .sidebar__tab.is-active .sidebar__tab-icon{
+      background: rgba(0,121,130,.15);
+    }
+    .sidebar__tab-icon svg{
+      width: 14px;
+      height: 14px;
+    }
+    .sidebar__tab-badge{
+      margin-left: auto;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      background: var(--brand-blue);
+      color: #fff;
+      padding: 2px 7px;
+      border-radius: 10px;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    /* ── Main content area ── */
+    .dash-main{
+      flex: 1;
+      padding: clamp(20px, 3vw, 40px);
+      overflow-y: auto;
+    }
+    .dash-main__header{
+      margin-bottom: clamp(18px, 2vw, 28px);
+    }
+    .dash-main__header h1{
+      font-family: Poppins, Inter, sans-serif;
+      font-size: clamp(22px, 3.5vw, 30px);
+      font-weight: 700;
+      color: var(--brand-blue);
+      margin: 0 0 4px;
+      letter-spacing: -.3px;
+    }
+    .dash-main__header p{
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(11px, 1vw, 13px);
+      color: var(--ink-2);
+      letter-spacing: -.2px;
+    }
+
+    /* ── Detail Panel (shown on hover) ── */
+    .detail-panel{
+      display: none;
+      animation: fadeSlideUp .35s cubic-bezier(.16,1,.3,1) both;
+    }
+    .detail-panel.is-visible{
+      display: block;
+    }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .detail-panel__title{
+      font-family: Poppins, Inter, sans-serif;
+      font-size: clamp(18px, 2.5vw, 24px);
+      font-weight: 700;
+      color: var(--ink);
+      margin: 0 0 6px;
+    }
+    .detail-panel__desc{
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(11px, 1vw, 13px);
+      color: var(--ink-2);
+      line-height: 1.6;
+      margin-bottom: 20px;
+      max-width: 640px;
+    }
+
+    /* Service cards grid */
+    .svc-grid{
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .svc-card{
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-left: 3px solid var(--brand-blue);
+      border-radius: clamp(4px, .4vw, 6px);
+      padding: clamp(16px, 1.5vw, 22px);
+      box-shadow: var(--shadow);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .svc-card:hover{
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0,0,0,.08);
+    }
+    .svc-card__name{
+      font-family: Poppins, Inter, sans-serif;
+      font-size: clamp(14px, 1.2vw, 16px);
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .svc-card__meta{
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-2);
+      line-height: 1.55;
+      letter-spacing: -.2px;
+    }
+    .svc-card__meta span{
+      display: block;
+      margin-bottom: 2px;
+    }
+    .svc-card__status{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+    .svc-card__status--active{
+      background: rgba(150,190,13,.1);
+      color: #5a8a00;
+    }
+    .svc-card__status--pending{
+      background: rgba(245,194,66,.1);
+      color: #b8860b;
+    }
+    .svc-card__status--complete{
+      background: rgba(0,155,163,.08);
+      color: var(--brand-blue);
+    }
+    .svc-card__status-dot{
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* ── Empty state (before hover) ── */
+    .dash-empty{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--ink-2);
+    }
+    .dash-empty svg{
+      width: 48px;
+      height: 48px;
+      opacity: .25;
+      margin-bottom: 16px;
+    }
+    .dash-empty__text{
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      letter-spacing: -.2px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .dash{ flex-direction: column; }
+      .sidebar{
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0;
+        padding: 12px 0 0;
+        border-right: none;
+        border-bottom: 1px solid var(--stroke);
+        box-shadow: 0 2px 8px rgba(0,0,0,.04);
+      }
+      .sidebar__title{
+        width: 100%;
+        padding: 0 16px 8px;
+        border-bottom: 1px solid var(--stroke);
+        margin-bottom: 0;
+      }
+      .sidebar__tab{
+        flex: 1;
+        justify-content: center;
+        padding: 12px 8px;
+        border-left: none;
+        border-bottom: 3px solid transparent;
+        font-size: 11px;
+      }
+      .sidebar__tab:hover,
+      .sidebar__tab.is-active{
+        border-left-color: transparent;
+        border-bottom-color: var(--brand-blue);
+      }
+      .sidebar__tab-badge{ display: none; }
+    }
+    @media (max-width: 480px) {
+      .svc-grid{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body data-barba="wrapper">
+  <div class="brand-stripe" aria-hidden="true"></div>
+
+  <div class="bg-decor" aria-hidden="true">
+    <div class="bg-decor__grid"></div>
+    <div class="bg-decor__scanline bg-decor__scanline--1"></div>
+    <div class="bg-decor__scanline bg-decor__scanline--2"></div>
+    <div class="bg-decor__scanline bg-decor__scanline--3"></div>
+    <div class="bg-decor__bracket bg-decor__bracket--tl"></div>
+    <div class="bg-decor__bracket bg-decor__bracket--tr"></div>
+    <div class="bg-decor__bracket bg-decor__bracket--bl"></div>
+    <div class="bg-decor__bracket bg-decor__bracket--br"></div>
+    <div class="bg-decor__crosshair bg-decor__crosshair--1"></div>
+    <div class="bg-decor__crosshair bg-decor__crosshair--2"></div>
+    <div class="bg-decor__node bg-decor__node--1"></div>
+    <div class="bg-decor__node bg-decor__node--2"></div>
+    <div class="bg-decor__node bg-decor__node--3"></div>
+    <div class="bg-decor__node bg-decor__node--4"></div>
+    <div class="bg-decor__node bg-decor__node--5"></div>
+    <div class="bg-decor__node bg-decor__node--6"></div>
+  </div>
+
+  <div class="page" data-barba="container" data-barba-namespace="dashboard">
+    <header class="site-header">
+      <a class="brand" href="#" aria-label="Phoenix Contact Home">
+        <svg class="brand__logo" viewBox="0 0 327 30" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PHOENIX CONTACT">
+          <path d="M32.7 14.6C32.7 6.6 26.1 0 18 0H0V29.2H18C26.1 29.3 32.7 22.7 32.7 14.6" fill="#009BA3"/>
+          <path d="M326.5 14.6C326.5 6.5 320 0 311.9 0C303.8 0 297.3 6.5 297.3 14.6C297.3 22.7 303.9 29.2 311.9 29.2C320 29.2 326.5 22.7 326.5 14.6" fill="#009BA3"/>
+          <path d="M262.4 14.6C262.4 6.5 255.9 0 247.8 0H215.8C207.7 0 201.2 6.5 201.2 14.6C201.2 22.7 207.7 29.2 215.8 29.2H247.8C255.9 29.3 262.4 22.7 262.4 14.6" fill="#009BA3"/>
+          <path d="M64.6999 14.6C64.6999 6.6 58.0999 0 50.0999 0C41.9999 0 35.3999 6.6 35.3999 14.6C35.3999 22.7 41.8999 29.2 49.9999 29.2C58.0999 29.3 64.6999 22.7 64.6999 14.6" fill="#93C11C"/>
+          <path d="M294.5 14.6C294.5 6.5 288 0 279.9 0C271.8 0 265.3 6.5 265.3 14.6C265.3 22.7 271.8 29.2 279.9 29.2C287.9 29.3 294.5 22.7 294.5 14.6" fill="#93C11C"/>
+          <path class="logo-text" fill-rule="evenodd" clip-rule="evenodd" d="M184.5 10.1L186.8 13.8H192.6C192.6 13.8 189.2 9.1 187.4 6.7L192.6 0H187L184.6 3.3L182.2 0H176.5L181.7 6.7C179.9 9.1 176.5 13.8 176.5 13.8H182.3L184.5 10.1ZM114 16C112.7 15.4 111.5 15.3 109.9 15.3C106 15.3 102.5 18.5 102.5 22.5C102.5 26.6 105.7 29.6 110.3 29.6C111.9 29.6 112.7 29.5 114 28.8V24.8C113.2 25.3 112.3 25.7 111 25.7C109.2 25.7 107.7 24.2 107.7 22.4C107.7 20.5 109.2 19 111.1 19C112.2 19 113.2 19.4 114 20V16ZM141.1 15.6H146.1V29.4H141.9L136.1 23.6V29.4H131.1V15.6H135.1L141.1 21.5V15.6ZM192.6 19.3V15.6H179.3C174.1 15.6 171.8 18.5 171.8 22.5C171.8 26.5 175.3 29.6 179.3 29.6C180.7 29.6 181.6 29.4 182.8 28.7V25C182 25.7 181.3 25.9 180.2 25.9C178.3 25.8 176.7 24.4 176.7 22.5C176.7 20.8 177.7 19.2 179.7 19.2H184.2V29.4H189.2V19.3H192.6ZM146.9 15.6H158.7H158.8V19.2H155.4V29.4H150.4V19.3H146.9V15.6ZM175.9 13.9H170.5V0.1H175.9V13.9ZM121.7 0.1H116.7V13.9H121.7V8.9H126V13.9H131V0.1H126V4.8H121.7V0.1ZM163.8 0.1H168.7V13.8H164.5L158.6 8V13.9H153.6V0.1H157.6L163.8 5.9V0.1ZM87.8001 20.6V18.1C87.8001 16.7 88.9001 16.2 88.9001 16.2C89.9001 15.5 90.9001 14.2 90.9001 12.7C90.9001 11.4 90.4001 10.4 89.5001 9.6C89.3261 9.45087 89.1398 9.32027 88.958 9.19285C88.4083 8.80762 87.9001 8.45145 87.9001 7.7V5C87.9001 4.2 87.9001 3.4 89.4001 3.4C94.3001 3.4 98.4001 7.9 98.4001 12.5C98.4001 17.2 94.6001 21.8 89.4001 21.8C87.7001 21.8 87.8001 20.6 87.8001 20.6ZM85.7001 24.6V18.1C85.7001 16.8 84.6001 16.2 84.6001 16.2C83.6001 15.5 82.6001 14.3 82.6001 12.7C82.7001 11.4 83.1001 10.5 84.1001 9.6C84.3157 9.38437 84.5503 9.21618 84.7718 9.05744C85.2692 8.70087 85.7001 8.39195 85.7001 7.7V5C85.7001 4.2 85.7001 3.4 84.2001 3.4H77.5001C76.7001 3.4 76.0001 4.1 76.0001 4.9V24.6C76.0001 25.4 76.8001 26.1 77.6001 26.1H84.2001C85.0001 26.1 85.7001 25.4 85.7001 24.6ZM86.8001 14.6C85.7001 14.6 84.8001 13.7 84.8001 12.6C84.8001 11.5 85.7001 10.6 86.8001 10.6C87.9001 10.6 88.8001 11.5 88.8001 12.6C88.8001 13.7 87.9001 14.6 86.8001 14.6ZM72.6001 2.1C72.6001 1 73.5001 0.1 74.6001 0.1H99.5001C100.6 0.1 101.5 1 101.5 2.1V27.3C101.5 28.4 100.6 29.3 99.5001 29.3H74.6001C73.5001 29.3 72.6001 28.4 72.6001 27.3V2.1ZM108.4 3.4H109.2C110.3 3.4 111 4 111 5C111 5.9 110.3 6.6 109.2 6.6H108.4V3.4ZM103.3 0.1H110.2C114 0.1 115.9 2 115.9 5C115.9 7.9 113 9.9 110.2 9.9H108.3V13.9H103.3V0.1ZM139.6 4.1C141.1 4.1 142 5.6 142 7.1C142 8.5 141.1 10 139.6 10C138.2 10 137.3 8.6 137.3 7.1C137.3 5.6 138.1 4.1 139.6 4.1ZM139.6 0.1H152.1V3.4H146.5V5.3H152.1V8.6H146.5V10.5H152.1V13.9H139.6C137.1 13.9 135.5 13 134.3 11.9C133.3 10.9 132.4 9 132.4 7C132.4 4.9 132.9 3.2 134.3 1.9C135.7 0.6 137.1 0.1 139.6 0.1ZM163.4 23.7L164.5 20.3L165.6 23.7H163.4ZM161.8 15.6H167.1L172.7 29.4H167.6L166.6 26.9H162.2L161.2 29.4H156.1L161.8 15.6ZM122.4 19.5C123.9 19.5 124.8 21 124.8 22.6C124.8 24.1 123.9 25.6 122.4 25.6C120.9 25.6 120 24.1 120 22.6C120 21 120.9 19.5 122.4 19.5ZM122.4 15.3C127 15.3 129.9 18.4 129.9 22.5C129.9 26.5 127 29.6 122.4 29.6C117.9 29.6 115 26.5 115 22.5C115 18.5 118 15.3 122.4 15.3Z" fill="black"/>
+        </svg>
+      </a>
+
+      <div class="header-right">
+        <div class="it-logo" aria-label="Internal Transitions">
+          <span class="it-1">Internal</span>
+          <span class="it-2">Transitions</span>
+        </div>
+
+        <button class="btn-darkmode" id="darkToggle" type="button" aria-label="Toggle dark mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="dash">
+      <!-- ── Sidebar ── -->
+      <nav class="sidebar" aria-label="Service categories">
+        <div class="sidebar__title">Service Centers</div>
+
+        <div class="sidebar__tab" data-panel="itssc">
+          <div class="sidebar__tab-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          ITSSC
+          <span class="sidebar__tab-badge">6</span>
+        </div>
+
+        <div class="sidebar__tab" data-panel="tssc">
+          <div class="sidebar__tab-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          TSSC
+          <span class="sidebar__tab-badge">5</span>
+        </div>
+
+        <div class="sidebar__tab" data-panel="cssc">
+          <div class="sidebar__tab-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          CSSC
+          <span class="sidebar__tab-badge">4</span>
+        </div>
+      </nav>
+
+      <!-- ── Main content ── -->
+      <section class="dash-main">
+        <div class="dash-main__header">
+          <h1>Service Dashboard</h1>
+          <p>Hover a service center tab to view its details</p>
+        </div>
+
+        <!-- Empty state (visible by default) -->
+        <div class="dash-empty" id="dashEmpty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+          <span class="dash-empty__text">Select a service center from the sidebar to view details</span>
+        </div>
+
+        <!-- ITSSC Panel -->
+        <div class="detail-panel" id="panel-itssc">
+          <h2 class="detail-panel__title">IT Shared Service Center (ITSSC)</h2>
+          <p class="detail-panel__desc">Centralized IT services spanning infrastructure management, application support, cybersecurity, and digital workplace solutions for all business units.</p>
+          <div class="svc-grid">
+            <div class="svc-card">
+              <div class="svc-card__name">Infrastructure Management</div>
+              <div class="svc-card__meta">
+                <span>Server &amp; Network Operations</span>
+                <span>Cloud Migration &amp; Monitoring</span>
+              </div>
+              <div class="svc-card__status svc-card__status--active"><span class="svc-card__status-dot"></span> Active</div>
+            </div>
+            <div class="svc-card">
+              <div class="svc-card__name">Application Support</div>
+              <div class="svc-card__meta">
+                <span>ERP / SAP Module Maintenance</span>
+                <span>Custom App Dev &amp; Deployment</span>
+              </div>
+              <div class="svc-card__status svc-card__status--active"><span class="svc-card__status-dot"></span> Active</div>
+            </div>
+            <div class="svc-card">
+              <div class="svc-card__name">Cybersecurity</div>
+              <div class="svc-card__meta">
+                <span>Threat Detection &amp; Response</span>
+                <span>Compliance &amp; Audit</span>
+              </div>
+              <div class="svc-card__status svc-card__status--pending"><span class="svc-card__status-dot"></span> In Review</div>
+            </div>
+            <div class="svc-card">
+              <div class="svc-card__name">Service Desk</div>
+              <div class="svc-card__meta">
+                <span>L1 / L2 Incident Handling</span>
+                <span>Asset &amp; Ticket Management</span>
+              </div>
+              <div class="svc-card__status svc-card__status--active"><span class="svc-card__status-dot"></span> Active</div>
+            </div>
+            <div class="svc-card">
+              <div class="svc-card__name">Digital Workplace</div>
+              <div class="svc-card__meta">
+                <span>Collaboration Tools (M365)</span>
+                <span>Device Lifecycle Management</span>
+              </div>
+              <div class="svc-card__status svc-card__status--complete"><span class="svc-card__status-dot"></span> Transitioned</div>
+            </div>
+            <div class="svc-card">
+              <div class="svc-card__name">Data &amp; Analytics</div>
+              <div class="svc-card__meta">
+                <span>BI Reporting &amp; Dashboards</span>
+                <span>Data Governance</span>
+              </div>
+              <div class="svc-card__status svc-card__status--pending"><span class="svc-card__status-dot"></span> Planned</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TSSC Panel -->
+        <div class="detail-panel" id="panel-tssc">
+          <h2 class="detail-panel__title">Technical Shared Service Center (TSSC)</h2>
+          <p class="detail-panel__desc">Engineering and technical operations including product development support, quality assurance, testing labs, and technical documentation services.</p>
+          <div class="svc-grid">
+            <div class="svc-card">
+              <div class="svc-card__name">Product Engineering Support</div>
+              <div class="svc-card__meta">
+                <span>CAD / PLM Services</span>
+                <span>Design Validation</span>
+              </div>
+              <div class="svc-card__status svc-card__status--active"><span class="svc-card__status-dot"></span> Active</div>
+            </div>
+            <div class="svc-card">
+              <div class="svc-card__name">Quality Assurance</div>
+              <div class="svc-card__meta">
+                <span>Test Automation Frameworks</span>
+                <span>Compliance Testing</span>
+              </div>
+              <div class="svc-card__status svc-card__status--active"><span class="svc-card__status-dot"></span> Active</div>
+            </div>
+            <div class="svc-card">
+              <div class="svc-card__name">Lab &amp; Prototyping</div>
+              <div class="svc-card__meta">
+                <span>Rapid Prototyping</span>
+                <span>Environmental Testing</span>
+              </div>
+              <div class="svc-card__status svc-card__status--pending"><span class="svc-card__status-dot"></span> In Review</div>
+            </div>
+            <div class="svc-card">
+              <div class="svc-card__name">Technical Documentation</div>
+              <div class="svc-card__meta">
+                <span>Manuals &amp; Data Sheets</span>
+                <span>Knowledge Base Management</span>
+              </div>
+              <div class="svc-card__status svc-card__status--complete"><span class="svc-card__status-dot"></span> Transitioned</div>
+            </div>
+            <div class="svc-card">
+              <div class="svc-card__name">Process Automation</div>
+              <div class="svc-card__meta">
+                <span>PLC / SCADA Support</span>
+                <span>Industrial IoT Integration</span>
+              </div>
+              <div class="svc-card__status svc-card__status--active"><span class="svc-card__status-dot"></span> Active</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CSSC Panel -->
+        <div class="detail-panel" id="panel-cssc">
+          <h2 class="detail-panel__title">Corporate Shared Service Center (CSSC)</h2>
+          <p class="detail-panel__desc">Enterprise corporate functions covering finance &amp; accounting, human resources, procurement, and legal &amp; compliance shared services.</p>
+          <div class="svc-grid">
+            <div class="svc-card">
+              <div class="svc-card__name">Finance &amp; Accounting</div>
+              <div class="svc-card__meta">
+                <span>Accounts Payable / Receivable</span>
+                <span>Financial Reporting</span>
+              </div>
+              <div class="svc-card__status svc-card__status--active"><span class="svc-card__status-dot"></span> Active</div>
+            </div>
+            <div class="svc-card">
+              <div class="svc-card__name">Human Resources</div>
+              <div class="svc-card__meta">
+                <span>Payroll &amp; Benefits</span>
+                <span>Talent Acquisition</span>
+              </div>
+              <div class="svc-card__status svc-card__status--active"><span class="svc-card__status-dot"></span> Active</div>
+            </div>
+            <div class="svc-card">
+              <div class="svc-card__name">Procurement</div>
+              <div class="svc-card__meta">
+                <span>Vendor Management</span>
+                <span>Purchase Order Processing</span>
+              </div>
+              <div class="svc-card__status svc-card__status--pending"><span class="svc-card__status-dot"></span> In Review</div>
+            </div>
+            <div class="svc-card">
+              <div class="svc-card__name">Legal &amp; Compliance</div>
+              <div class="svc-card__meta">
+                <span>Contract Management</span>
+                <span>Regulatory Compliance</span>
+              </div>
+              <div class="svc-card__status svc-card__status--complete"><span class="svc-card__status-dot"></span> Transitioned</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Wave transition overlay -->
+  <div class="transition-overlay" aria-hidden="true">
+    <svg class="transition-overlay__wave" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <path class="transition-overlay__path" d="M 0 100 V 100 Q 50 100 100 100 V 100 Z" />
+    </svg>
+  </div>
+
+  <script src="https://unpkg.com/@barba/core@2.10.3/dist/barba.umd.js"></script>
+  <script src="barba-init.js"></script>
+</body>
+</html>
