@@ -2,6 +2,16 @@
    Barba.js – smooth page transitions
    =========================== */
 
+// Google reCAPTCHA onload callback (explicit render mode)
+function onRecaptchaLoad() {
+  var box = document.getElementById('recaptchaBox');
+  if (box && window.grecaptcha && !box.hasChildNodes()) {
+    grecaptcha.render(box, {
+      sitekey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
+    });
+  }
+}
+
 // Utility: wait for a given number of milliseconds
 function delay(ms) {
   return new Promise(function (resolve) { setTimeout(resolve, ms); });
@@ -100,7 +110,160 @@ function initForgotPage() {
       return;
     }
 
-    showMessage('If an account exists for <b>' + value + '</b>, a reset link has been sent. Check your inbox (and spam).');
+    showMessage('If an account exists for <b>' + value + '</b>, a reset link has been sent. Check your inbox (and spam). <br><br><a href="reset-password.html" style="color:var(--brand-blue);font-weight:600">Reset Password Now &rarr;</a>');
+  });
+}
+
+/** Reset password page (reset-password.html) */
+function initResetPage() {
+  var form = document.getElementById('resetForm');
+  var newPw = document.getElementById('newPassword');
+  var confirmPw = document.getElementById('confirmPassword');
+  var info = document.getElementById('info');
+  var strengthMeter = document.querySelector('.pw-strength');
+  var strengthLabel = document.getElementById('strengthLabel');
+  if (!form) return;
+
+  // ---- Google reCAPTCHA v2 ----
+  // Render reCAPTCHA explicitly so it works after Barba.js transitions
+  var recaptchaBox = document.getElementById('recaptchaBox');
+  if (recaptchaBox && window.grecaptcha && window.grecaptcha.render) {
+    try {
+      grecaptcha.render(recaptchaBox, {
+        sitekey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
+      });
+    } catch (e) { /* already rendered */ }
+  }
+
+  // --- Password strength meter ---
+  function getStrength(pw) {
+    var score = 0;
+    if (pw.length >= 8) score++;
+    if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
+    if (/\d/.test(pw)) score++;
+    if (/[^A-Za-z0-9]/.test(pw)) score++;
+    return score;
+  }
+  var strengthLabels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+
+  if (newPw) {
+    newPw.addEventListener('input', function () {
+      var level = getStrength(newPw.value);
+      if (strengthMeter) strengthMeter.setAttribute('data-level', newPw.value ? level : 0);
+      if (strengthLabel) strengthLabel.textContent = newPw.value ? strengthLabels[level] : '';
+    });
+  }
+
+  // --- Eye toggle for both password fields ---
+  var eyeBtns = form.querySelectorAll('.btn-eye');
+  eyeBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var targetId = btn.getAttribute('data-target');
+      var input = document.getElementById(targetId);
+      if (!input) return;
+      var isVisible = btn.classList.toggle('is-visible');
+      input.type = isVisible ? 'text' : 'password';
+      btn.setAttribute('aria-label', isVisible ? 'Hide password' : 'Show password');
+    });
+  });
+
+  // --- Message helper ---
+  function showMessage(html, ok) {
+    if (typeof ok === 'undefined') ok = true;
+    info.style.display = 'block';
+    info.className = ok ? 'notice' : 'notice notice--error';
+    info.innerHTML = html;
+  }
+
+  // --- Form submission ---
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var pw = newPw.value;
+    var cpw = confirmPw.value;
+
+    // Clear previous styles
+    [newPw, confirmPw].forEach(function (i) { if (i) i.style.borderColor = ''; });
+
+    if (!pw) {
+      newPw.style.borderColor = '#E86A6A';
+      showMessage('Please enter a new password.', false);
+      newPw.focus();
+      return;
+    }
+    if (pw.length < 8) {
+      newPw.style.borderColor = '#E86A6A';
+      showMessage('Password must be at least 8 characters.', false);
+      newPw.focus();
+      return;
+    }
+    if (!cpw) {
+      confirmPw.style.borderColor = '#E86A6A';
+      showMessage('Please confirm your password.', false);
+      confirmPw.focus();
+      return;
+    }
+    if (pw !== cpw) {
+      confirmPw.style.borderColor = '#E86A6A';
+      showMessage('Passwords do not match.', false);
+      confirmPw.focus();
+      return;
+    }
+    if (!window.grecaptcha || !grecaptcha.getResponse()) {
+      showMessage('Please complete the reCAPTCHA verification.', false);
+      return;
+    }
+
+    // Simulate success
+    var submitBtn = form.querySelector('.btn-primary');
+    var originalText = submitBtn ? submitBtn.textContent : '';
+    if (submitBtn) {
+      submitBtn.classList.add('is-loading');
+      submitBtn.textContent = 'Resetting';
+    }
+
+    setTimeout(function () {
+      if (submitBtn) {
+        submitBtn.classList.remove('is-loading');
+        submitBtn.textContent = originalText;
+      }
+      showMessage('Your password has been reset successfully! You can now <a href="index.html" style="color:var(--brand-blue);font-weight:600">log in</a> with your new password.');
+    }, 1200);
+  });
+}
+
+/** Dashboard page – sidebar tab click reveals detail panels */
+function initDashboardPage() {
+  var tabs = document.querySelectorAll('.sidebar__tab');
+  var panels = document.querySelectorAll('.detail-panel');
+  var empty = document.getElementById('dashEmpty');
+  if (!tabs.length) return;
+
+  var pinned = null; // tracks the clicked/pinned tab id
+
+  function showPanel(id) {
+    panels.forEach(function (p) { p.classList.remove('is-visible'); });
+    if (empty) empty.style.display = 'none';
+    var target = document.getElementById('panel-' + id);
+    if (target) target.classList.add('is-visible');
+    tabs.forEach(function (t) {
+      t.classList.toggle('is-active', t.getAttribute('data-panel') === id);
+    });
+  }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      var id = tab.getAttribute('data-panel');
+      if (pinned === id) {
+        // clicking the same tab again deselects it
+        pinned = null;
+        panels.forEach(function (p) { p.classList.remove('is-visible'); });
+        tabs.forEach(function (t) { t.classList.remove('is-active'); });
+        if (empty) empty.style.display = '';
+      } else {
+        pinned = id;
+        showPanel(id);
+      }
+    });
   });
 }
 
@@ -164,6 +327,8 @@ function initCurrentPage() {
 
   if (namespace === 'login')  initLoginPage();
   if (namespace === 'forgot') initForgotPage();
+  if (namespace === 'reset')  initResetPage();
+  if (namespace === 'dashboard') initDashboardPage();
 }
 
 // ===========================
