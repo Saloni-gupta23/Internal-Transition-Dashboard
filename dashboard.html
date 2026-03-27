@@ -30,6 +30,41 @@
       position: relative;
       z-index: 2;
       box-shadow: 2px 0 12px rgba(0,0,0,.04);
+      transition: width .3s cubic-bezier(.4,0,.2,1);
+    }
+    .sidebar.is-collapsed{
+      width: 62px;
+    }
+
+    /* Toggle button */
+    .sidebar__toggle{
+      position: absolute;
+      top: 14px;
+      right: -14px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid var(--stroke);
+      background: var(--card);
+      color: var(--ink);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,.08);
+      z-index: 3;
+      transition: transform .3s;
+    }
+    .sidebar__toggle:hover{
+      background: rgba(0,121,130,.06);
+      border-color: var(--brand-blue);
+      color: var(--brand-blue);
+    }
+    .sidebar.is-collapsed .sidebar__toggle{
+      transform: rotate(180deg);
+    }
+    .sidebar__toggle svg{
+      width: 14px;
+      height: 14px;
     }
     .sidebar__title{
       font-family: 'Space Mono', monospace;
@@ -40,6 +75,13 @@
       padding: 0 clamp(16px, 1.5vw, 24px) 12px;
       border-bottom: 1px solid var(--stroke);
       margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      transition: opacity .2s;
+    }
+    .sidebar.is-collapsed .sidebar__title{
+      opacity: 0;
+      padding: 0 8px 12px;
     }
 
     .sidebar__tab{
@@ -49,7 +91,7 @@
       gap: 12px;
       padding: 14px clamp(16px, 1.5vw, 24px);
       cursor: pointer;
-      transition: background .2s, color .2s;
+      transition: background .2s, color .2s, padding .3s;
       border-left: 3px solid transparent;
       font-family: 'Space Mono', monospace;
       font-size: clamp(12px, 1.1vw, 14px);
@@ -59,6 +101,14 @@
       letter-spacing: .6px;
       -webkit-user-select: none;
       user-select: none;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .sidebar.is-collapsed .sidebar__tab{
+      justify-content: center;
+      padding: 14px 0;
+      border-left-width: 3px;
+      gap: 0;
     }
     .sidebar__tab:hover,
     .sidebar__tab.is-active{
@@ -95,9 +145,103 @@
       border-radius: 10px;
       min-width: 20px;
       text-align: center;
+      transition: opacity .2s, width .2s;
+    }
+    .sidebar.is-collapsed .sidebar__tab-badge{
+      display: none;
     }
 
-    /* ── Main content area ── */
+    /* Hide tab label text when collapsed */
+    .sidebar__tab-label{
+      transition: opacity .2s, width .2s;
+    }
+    .sidebar.is-collapsed .sidebar__tab-label{
+      opacity: 0;
+      width: 0;
+      overflow: hidden;
+    }
+
+    /* DOI Navigation */
+    .sidebar__divider{
+      height: 1px;
+      background: var(--stroke);
+      margin: 8px 0;
+    }
+    .sidebar__doi-title{
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--ink-2);
+      padding: 12px clamp(16px, 1.5vw, 24px) 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      transition: opacity .2s;
+    }
+    .sidebar.is-collapsed .sidebar__doi-title{
+      opacity: 0;
+      padding: 8px 8px;
+    }
+
+    .sidebar__doi-link{
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px clamp(16px, 1.5vw, 24px);
+      cursor: pointer;
+      transition: background .2s, color .2s, padding .3s;
+      border-left: 3px solid transparent;
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(11px, 1vw, 13px);
+      font-weight: 600;
+      color: var(--ink);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      -webkit-user-select: none;
+      user-select: none;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .sidebar.is-collapsed .sidebar__doi-link{
+      justify-content: center;
+      padding: 12px 0;
+      border-left-width: 3px;
+      gap: 0;
+    }
+    .sidebar__doi-link:hover,
+    .sidebar__doi-link.is-active{
+      background: rgba(0,121,130,.08);
+      border-left-color: var(--brand-blue);
+      color: var(--brand-blue);
+    }
+    .sidebar__doi-icon{
+      width: 20px;
+      height: 20px;
+      display: grid;
+      place-items: center;
+      border-radius: 3px;
+      background: rgba(147, 193, 28, 0.1);
+      flex-shrink: 0;
+      transition: background .2s;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .sidebar__doi-link:hover .sidebar__doi-icon,
+    .sidebar__doi-link.is-active .sidebar__doi-icon{
+      background: rgba(147, 193, 28, 0.2);
+    }
+
+    /* Hide label text when collapsed */
+    .sidebar__doi-label{
+      transition: opacity .2s, width .2s;
+    }
+    .sidebar.is-collapsed .sidebar__doi-label{
+      opacity: 0;
+      width: 0;
+      overflow: hidden;
+    }
     .dash-main{
       flex: 1;
       padding: clamp(20px, 3vw, 40px);
@@ -147,76 +291,435 @@
       color: var(--ink-2);
       line-height: 1.6;
       margin-bottom: 20px;
-      max-width: 640px;
     }
 
-    /* Service cards grid */
-    .svc-grid{
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 16px;
+    /* Service table */
+    .svc-table-wrap{
+      position: relative;
+      margin-top: 4px;
     }
-    .svc-card{
-      background: var(--card);
+    .svc-table-scroll{
+      overflow-x: auto;
+      border-radius: 6px;
       border: 1px solid var(--stroke);
-      border-left: 3px solid var(--brand-blue);
-      border-radius: clamp(4px, .4vw, 6px);
-      padding: clamp(16px, 1.5vw, 22px);
-      box-shadow: var(--shadow);
-      transition: transform .2s, box-shadow .2s;
     }
-    .svc-card:hover{
-      transform: translateY(-2px);
-      box-shadow: 0 4px 20px rgba(0,0,0,.08);
+    .svc-table-scroll::-webkit-scrollbar{ height: 6px; }
+    .svc-table-scroll::-webkit-scrollbar-track{ background: transparent; }
+    .svc-table-scroll::-webkit-scrollbar-thumb{
+      background: var(--brand-blue);
+      border-radius: 3px;
     }
-    .svc-card__name{
-      font-family: Poppins, Inter, sans-serif;
-      font-size: clamp(14px, 1.2vw, 16px);
-      font-weight: 600;
+    .svc-table-scroll::-webkit-scrollbar-thumb:hover{
+      background: #007a82;
+    }
+    .svc-table{
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(10px, .9vw, 12px);
+      white-space: nowrap;
+    }
+    .svc-table thead th{
+      background: var(--brand-blue);
+      color: #fff;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      font-size: clamp(9px, .8vw, 11px);
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 2px solid rgba(0,0,0,.1);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .svc-table tbody tr{
+      transition: background .15s;
+    }
+    .svc-table tbody tr:nth-child(even){
+      background: rgba(0,121,130,.025);
+    }
+    .svc-table tbody tr:hover{
+      background: rgba(0,121,130,.06);
+    }
+    .svc-table td{
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--stroke);
       color: var(--ink);
-      margin-bottom: 6px;
+      vertical-align: middle;
     }
-    .svc-card__meta{
+    .svc-table td:first-child{
+      font-weight: 700;
+      color: var(--brand-blue);
+      text-align: center;
+    }
+
+    /* Row expand button */
+    .svc-row-expand{
+      width: 22px;
+      height: 22px;
+      border: 1px solid var(--stroke);
+      border-radius: 4px;
+      background: transparent;
+      color: var(--brand-blue);
+      cursor: pointer;
+      display: inline-grid;
+      place-items: center;
+      padding: 0;
+      transition: background .15s, border-color .15s, transform .25s;
+    }
+    .svc-row-expand:hover{
+      background: rgba(0,121,130,.08);
+      border-color: var(--brand-blue);
+      transform: scale(1.15);
+    }
+    .svc-row-expand.is-expanded{
+      transform: rotate(90deg);
+      background: rgba(0,121,130,.10);
+      border-color: var(--brand-blue);
+    }
+    .svc-row-expand svg{
+      width: 12px;
+      height: 12px;
+    }
+
+    /* ── Inline expansion row ── */
+    .svc-expand-row td{
+      padding: 0 !important;
+      border-bottom: 1px solid var(--stroke);
+      background: var(--card, #fff);
+    }
+    .svc-expand-inner{
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height .45s cubic-bezier(.4,0,.2,1), opacity .3s ease;
+    }
+    .svc-expand-inner.is-open{
+      max-height: 2000px;
+      opacity: 1;
+    }
+    .svc-expand-content{
+      border: 1px solid var(--stroke);
+      border-radius: 6px;
+      margin: 12px 8px 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,.06);
+    }
+
+    /* ── Transition Cycle Modal ── */
+    .tc-overlay{
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0,0,0,.5);
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+      display: none;
+      place-items: center;
+      opacity: 0;
+      transition: opacity .25s;
+    }
+    .tc-overlay.is-open{
+      display: grid;
+      opacity: 1;
+    }
+    .tc-modal{
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: min(1100px, 96vw);
+      max-height: 92vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,.22);
+      animation: tcSlideUp .3s cubic-bezier(.16,1,.3,1) both;
       font-family: 'Space Mono', monospace;
-      font-size: 11px;
-      color: var(--ink-2);
-      line-height: 1.55;
-      letter-spacing: -.2px;
+      color: #222;
     }
-    .svc-card__meta span{
-      display: block;
-      margin-bottom: 2px;
+    [data-theme="dark"] .tc-modal{
+      background: var(--card);
+      color: var(--ink);
+      border-color: var(--stroke);
     }
-    .svc-card__status{
-      display: inline-flex;
-      align-items: center;
+    @keyframes tcSlideUp{
+      from{ opacity: 0; transform: translateY(24px); }
+      to{ opacity: 1; transform: translateY(0); }
+    }
+
+    /* Modal header */
+    .tc-head{
+      padding: 18px 24px 14px;
+      position: relative;
+    }
+    .tc-head__row{
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .tc-head__left{ flex: 1; min-width: 200px; }
+    .tc-head__unit{
+      font-size: 18px;
+      font-weight: 700;
+      font-family: Poppins, Inter, sans-serif;
+      color: #222;
+      margin: 0 0 2px;
+    }
+    [data-theme="dark"] .tc-head__unit{ color: var(--ink); }
+    .tc-head__service{
+      font-size: 12px;
+      color: #555;
+      margin: 0 0 1px;
+    }
+    [data-theme="dark"] .tc-head__service{ color: var(--ink-2); }
+    .tc-head__labels{
+      display: flex;
+      flex-wrap: wrap;
       gap: 6px;
-      margin-top: 10px;
+      margin-top: 8px;
+    }
+    .tc-label{
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      padding: 3px 10px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+    .tc-label--teal{
+      background: var(--brand-blue);
+      color: #fff;
+    }
+    .tc-label--outline{
+      border: 1px solid var(--stroke);
+      color: #555;
+    }
+    [data-theme="dark"] .tc-label--outline{ color: var(--ink-2); }
+    .tc-head__right{
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .tc-badge{
+      font-size: 11px;
+      font-weight: 700;
       font-family: 'Space Mono', monospace;
+      padding: 5px 16px;
+      border-radius: 4px;
+      text-align: center;
+      min-width: 90px;
+    }
+    .tc-badge--status{
+      background: var(--brand-blue);
+      color: #fff;
+    }
+    .tc-badge--fte{
+      background: var(--brand-blue);
+      color: #fff;
+    }
+    .tc-modal__close{
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--stroke);
+      border-radius: 4px;
+      background: transparent;
+      color: #888;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: background .15s;
+      z-index: 2;
+    }
+    .tc-modal__close:hover{ background: rgba(0,0,0,.06); }
+    .tc-modal__close svg{ width: 14px; height: 14px; }
+
+    /* Gantt table */
+    .tc-gantt-wrap{
+      overflow-x: auto;
+      border-top: 1px solid #ccc;
+    }
+    [data-theme="dark"] .tc-gantt-wrap{ border-color: var(--stroke); }
+    .tc-gantt{
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      min-width: 920px;
+    }
+    .tc-gantt th,
+    .tc-gantt td{
+      border: 1px solid #ccc;
+      padding: 0;
+      text-align: center;
+      vertical-align: middle;
+    }
+    [data-theme="dark"] .tc-gantt th,
+    [data-theme="dark"] .tc-gantt td{ border-color: var(--stroke); }
+
+    /* Year header row */
+    .tc-gantt__year{
+      background: var(--brand-blue);
+      color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 5px 0;
+    }
+    /* Month header row */
+    .tc-gantt__month{
+      background: var(--brand-blue);
+      color: #fff;
+      font-weight: 700;
+      font-size: 10px;
+      padding: 5px 4px;
+      min-width: 38px;
+    }
+    /* DOI + Work packages columns */
+    .tc-gantt__doi-head,
+    .tc-gantt__wp-head,
+    .tc-gantt__status-head{
+      background: var(--brand-blue);
+      color: #fff;
+      font-weight: 700;
+      font-size: 10px;
+      padding: 5px 8px;
+      text-align: left;
+    }
+    .tc-gantt__doi{
+      padding: 6px 8px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 11px;
+      white-space: nowrap;
+      min-width: 140px;
+      vertical-align: top;
+    }
+    .tc-gantt__doi-link{
+      color: var(--brand-blue);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(0,121,130,.35);
+      transition: color .15s, border-color .15s;
+    }
+    .tc-gantt__doi-link:hover{
+      color: #005f66;
+      border-bottom-color: #005f66;
+      border-bottom-style: solid;
+    }
+    [data-theme="dark"] .tc-gantt__doi-link:hover{
+      color: #4dd9e0;
+      border-bottom-color: #4dd9e0;
+    }
+    .tc-gantt__wp{
+      padding: 6px 8px;
+      text-align: left;
+      font-size: 10px;
+      min-width: 220px;
+      line-height: 1.35;
+    }
+    .tc-gantt__bar-cell{
+      position: relative;
+      height: 28px;
+      padding: 0;
+    }
+    .tc-gantt__bar{
+      position: absolute;
+      top: 6px;
+      bottom: 6px;
+      border-radius: 2px;
+      min-width: 4px;
+    }
+    .tc-gantt__bar--grey{ background: #888; }
+    .tc-gantt__bar--green{ background: #93C11C; }
+    .tc-gantt__bar--teal{ background: var(--brand-blue); }
+    .tc-gantt__status-cell{
+      width: 50px;
+      min-width: 50px;
+    }
+    .tc-status-dot{
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid #ccc;
+      vertical-align: middle;
+    }
+    .tc-status-dot--not-started{ background: #fff; border-color: #aaa; }
+    .tc-status-dot--on-track{ background: #93C11C; border: none; }
+    .tc-status-dot--risk{ background: #f5c242; border: none; }
+    .tc-status-dot--blocked{ background: #e74c3c; border: none; }
+
+    /* Bottom 3 boxes */
+    .tc-footer{
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0;
+      border-top: 1px solid #ccc;
+    }
+    [data-theme="dark"] .tc-footer{ border-color: var(--stroke); }
+    .tc-footer__box{
+      padding: 12px 14px;
+      min-height: 90px;
+      border-right: 1px solid #ccc;
+    }
+    .tc-footer__box:last-child{ border-right: none; }
+    [data-theme="dark"] .tc-footer__box{ border-color: var(--stroke); }
+    .tc-footer__title{
       font-size: 10px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: .5px;
-      padding: 4px 10px;
-      border-radius: 4px;
+      letter-spacing: .3px;
+      margin-bottom: 8px;
+      color: #222;
+      background: var(--brand-blue);
+      color: #fff;
+      margin: -12px -14px 10px;
+      padding: 7px 14px;
     }
-    .svc-card__status--active{
-      background: rgba(150,190,13,.1);
-      color: #5a8a00;
+    .tc-footer__body{
+      font-size: 10px;
+      color: #555;
+      line-height: 1.5;
     }
-    .svc-card__status--pending{
-      background: rgba(245,194,66,.1);
-      color: #b8860b;
+    [data-theme="dark"] .tc-footer__body{ color: var(--ink-2); }
+    .tc-footer__body li{
+      margin-bottom: 2px;
     }
-    .svc-card__status--complete{
-      background: rgba(0,155,163,.08);
-      color: var(--brand-blue);
+
+    /* Legend */
+    .tc-legend{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      padding: 10px 20px 14px;
+      font-size: 9px;
+      color: #555;
+      border-top: 1px solid #ccc;
+      align-items: center;
     }
-    .svc-card__status-dot{
-      width: 6px;
-      height: 6px;
+    [data-theme="dark"] .tc-legend{ border-color: var(--stroke); color: var(--ink-2); }
+    .tc-legend__item{
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+    .tc-legend__dot{
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      background: currentColor;
+      flex-shrink: 0;
+    }
+    .tc-legend__tri{
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-bottom: 10px solid;
+      flex-shrink: 0;
     }
 
     /* ── Empty state (before hover) ── */
@@ -274,11 +777,20 @@
         border-bottom-color: var(--brand-blue);
       }
       .sidebar__tab-badge{ display: none; }
+      .sidebar__toggle{ display: none; }
     }
     @media (max-width: 480px) {
-      .svc-grid{ grid-template-columns: 1fr; }
+      .svc-table{ font-size: 10px; }
+      .svc-table thead th,
+      .svc-table td{ padding: 8px 10px; }
     }
   </style>
+  <script>
+    // Auth guard – redirect to login if no valid session (only when served via HTTP)
+    if (window.location.protocol !== 'file:' && !sessionStorage.getItem('authToken')) {
+      window.location.replace('index.html');
+    }
+  </script>
 </head>
 <body data-barba="wrapper">
   <div class="brand-stripe" aria-hidden="true"></div>
@@ -342,14 +854,17 @@
 
     <main class="dash">
       <!-- ── Sidebar ── -->
-      <nav class="sidebar" aria-label="Service categories">
+      <nav class="sidebar" id="sidebar" aria-label="Service categories">
+        <button class="sidebar__toggle" id="sidebarToggle" type="button" aria-label="Toggle sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
         <div class="sidebar__title">Service Centers</div>
 
         <div class="sidebar__tab" data-panel="itssc">
           <div class="sidebar__tab-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
           </div>
-          ITSSC
+          <span class="sidebar__tab-label">ITSSC</span>
           <span class="sidebar__tab-badge">6</span>
         </div>
 
@@ -357,7 +872,7 @@
           <div class="sidebar__tab-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
           </div>
-          TSSC
+          <span class="sidebar__tab-label">TSSC</span>
           <span class="sidebar__tab-badge">5</span>
         </div>
 
@@ -365,16 +880,20 @@
           <div class="sidebar__tab-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
-          CSSC
+          <span class="sidebar__tab-label">CSSC</span>
           <span class="sidebar__tab-badge">4</span>
         </div>
+
+        <div class="sidebar__divider"></div>
+
+        
       </nav>
 
       <!-- ── Main content ── -->
       <section class="dash-main">
         <div class="dash-main__header">
           <h1>Service Dashboard</h1>
-          <p>Hover a service center tab to view its details</p>
+          <p>Click a service center tab to view its details</p>
         </div>
 
         <!-- Empty state (visible by default) -->
@@ -390,55 +909,67 @@
         <!-- ITSSC Panel -->
         <div class="detail-panel" id="panel-itssc">
           <h2 class="detail-panel__title">IT Shared Service Center (ITSSC)</h2>
-          <p class="detail-panel__desc">Centralized IT services spanning infrastructure management, application support, cybersecurity, and digital workplace solutions for all business units.</p>
-          <div class="svc-grid">
-            <div class="svc-card">
-              <div class="svc-card__name">Infrastructure Management</div>
-              <div class="svc-card__meta">
-                <span>Server &amp; Network Operations</span>
-                <span>Cloud Migration &amp; Monitoring</span>
-              </div>
-              <div class="svc-card__status svc-card__status--active"><span class="svc-card__status-dot"></span> Active</div>
-            </div>
-            <div class="svc-card">
-              <div class="svc-card__name">Application Support</div>
-              <div class="svc-card__meta">
-                <span>ERP / SAP Module Maintenance</span>
-                <span>Custom App Dev &amp; Deployment</span>
-              </div>
-              <div class="svc-card__status svc-card__status--active"><span class="svc-card__status-dot"></span> Active</div>
-            </div>
-            <div class="svc-card">
-              <div class="svc-card__name">Cybersecurity</div>
-              <div class="svc-card__meta">
-                <span>Threat Detection &amp; Response</span>
-                <span>Compliance &amp; Audit</span>
-              </div>
-              <div class="svc-card__status svc-card__status--pending"><span class="svc-card__status-dot"></span> In Review</div>
-            </div>
-            <div class="svc-card">
-              <div class="svc-card__name">Service Desk</div>
-              <div class="svc-card__meta">
-                <span>L1 / L2 Incident Handling</span>
-                <span>Asset &amp; Ticket Management</span>
-              </div>
-              <div class="svc-card__status svc-card__status--active"><span class="svc-card__status-dot"></span> Active</div>
-            </div>
-            <div class="svc-card">
-              <div class="svc-card__name">Digital Workplace</div>
-              <div class="svc-card__meta">
-                <span>Collaboration Tools (M365)</span>
-                <span>Device Lifecycle Management</span>
-              </div>
-              <div class="svc-card__status svc-card__status--complete"><span class="svc-card__status-dot"></span> Transitioned</div>
-            </div>
-            <div class="svc-card">
-              <div class="svc-card__name">Data &amp; Analytics</div>
-              <div class="svc-card__meta">
-                <span>BI Reporting &amp; Dashboards</span>
-                <span>Data Governance</span>
-              </div>
-              <div class="svc-card__status svc-card__status--pending"><span class="svc-card__status-dot"></span> Planned</div>
+          <p class="detail-panel__desc">Centralized IT services spanning infrastructure management, application support, cybersecurity, and digital workplace solutions.</p>
+          <div class="svc-table-wrap">
+            <div class="svc-table-scroll">
+            <table class="svc-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>S.No</th>
+                  <th>Vertical</th>
+                  <th>Service Area</th>
+                  <th>Job Position</th>
+                  <th>Responsible TSSC</th>
+                  <th>Responsible HQ</th>
+                  <th>Required FTE</th>
+                  <th>New Capacity / Relocation from HQ</th>
+                  <th>Planned Start at SSC</th>
+                  <th>End Date of SSC</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><button class="svc-row-expand" type="button" aria-label="View transition cycle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button></td>
+                  <td>1</td>
+                  <td>Operations</td>
+                  <td>Cloud Migration</td>
+                  <td>Cloud Architect</td>
+                  <td>S. Gupta</td>
+                  <td>M. Weber</td>
+                  <td>1.0</td>
+                  <td>Relocation from HQ</td>
+                  <td>2026-05-01</td>
+                  <td>2027-04-30</td>
+                </tr>
+                <tr>
+                  <td><button class="svc-row-expand" type="button" aria-label="View transition cycle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button></td>
+                  <td>2</td>
+                  <td>Development</td>
+                  <td>ERP / SAP Maintenance</td>
+                  <td>SAP Consultant</td>
+                  <td>A. Sharma</td>
+                  <td>T. Müller</td>
+                  <td>3.0</td>
+                  <td>New Capacity</td>
+                  <td>2026-04-15</td>
+                  <td>2027-06-30</td>
+                </tr>
+                <tr>
+                  <td><button class="svc-row-expand" type="button" aria-label="View transition cycle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button></td>
+                  <td>3</td>
+                  <td>Cybersecurity</td>
+                  <td>Threat Detection</td>
+                  <td>SOC Analyst</td>
+                  <td>P. Verma</td>
+                  <td>J. Schmidt</td>
+                  <td>2.0</td>
+                  <td>New Capacity</td>
+                  <td>2026-06-01</td>
+                  <td>2027-05-31</td>
+                </tr>
+              </tbody>
+            </table>
             </div>
           </div>
         </div>
@@ -446,92 +977,153 @@
         <!-- TSSC Panel -->
         <div class="detail-panel" id="panel-tssc">
           <h2 class="detail-panel__title">Technical Shared Service Center (TSSC)</h2>
-          <p class="detail-panel__desc">Engineering and technical operations including product development support, quality assurance, testing labs, and technical documentation services.</p>
-          <div class="svc-grid">
-            <div class="svc-card">
-              <div class="svc-card__name">Product Engineering Support</div>
-              <div class="svc-card__meta">
-                <span>CAD / PLM Services</span>
-                <span>Design Validation</span>
-              </div>
-              <div class="svc-card__status svc-card__status--active"><span class="svc-card__status-dot"></span> Active</div>
-            </div>
-            <div class="svc-card">
-              <div class="svc-card__name">Quality Assurance</div>
-              <div class="svc-card__meta">
-                <span>Test Automation Frameworks</span>
-                <span>Compliance Testing</span>
-              </div>
-              <div class="svc-card__status svc-card__status--active"><span class="svc-card__status-dot"></span> Active</div>
-            </div>
-            <div class="svc-card">
-              <div class="svc-card__name">Lab &amp; Prototyping</div>
-              <div class="svc-card__meta">
-                <span>Rapid Prototyping</span>
-                <span>Environmental Testing</span>
-              </div>
-              <div class="svc-card__status svc-card__status--pending"><span class="svc-card__status-dot"></span> In Review</div>
-            </div>
-            <div class="svc-card">
-              <div class="svc-card__name">Technical Documentation</div>
-              <div class="svc-card__meta">
-                <span>Manuals &amp; Data Sheets</span>
-                <span>Knowledge Base Management</span>
-              </div>
-              <div class="svc-card__status svc-card__status--complete"><span class="svc-card__status-dot"></span> Transitioned</div>
-            </div>
-            <div class="svc-card">
-              <div class="svc-card__name">Process Automation</div>
-              <div class="svc-card__meta">
-                <span>PLC / SCADA Support</span>
-                <span>Industrial IoT Integration</span>
-              </div>
-              <div class="svc-card__status svc-card__status--active"><span class="svc-card__status-dot"></span> Active</div>
+          <p class="detail-panel__desc">Engineering and technical operations including product development support, quality assurance, testing labs, and documentation.</p>
+          <div class="svc-table-wrap">
+            <div class="svc-table-scroll">
+            <table class="svc-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>S.No</th>
+                  <th>Vertical</th>
+                  <th>Service Area</th>
+                  <th>Job Position</th>
+                  <th>Responsible TSSC</th>
+                  <th>Responsible HQ</th>
+                  <th>Required FTE</th>
+                  <th>New Capacity / Relocation from HQ</th>
+                  <th>Planned Start at SSC</th>
+                  <th>End Date of SSC</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><button class="svc-row-expand" type="button" aria-label="View transition cycle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button></td>
+                  <td>1</td>
+                  <td>Product Dev</td>
+                  <td>CAD / PLM Services</td>
+                  <td>Design Engineer</td>
+                  <td>V. Rao</td>
+                  <td>L. Hoffmann</td>
+                  <td>2.0</td>
+                  <td>Relocation from HQ</td>
+                  <td>2026-04-01</td>
+                  <td>2027-03-31</td>
+                </tr>
+                <tr>
+                  <td><button class="svc-row-expand" type="button" aria-label="View transition cycle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button></td>
+                  <td>2</td>
+                  <td>Quality</td>
+                  <td>Test Automation</td>
+                  <td>QA Engineer</td>
+                  <td>M. Iyer</td>
+                  <td>S. Klein</td>
+                  <td>3.0</td>
+                  <td>New Capacity</td>
+                  <td>2026-05-01</td>
+                  <td>2027-04-30</td>
+                </tr>
+                <tr>
+                  <td><button class="svc-row-expand" type="button" aria-label="View transition cycle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button></td>
+                  <td>3</td>
+                  <td>R&amp;D</td>
+                  <td>Rapid Prototyping</td>
+                  <td>Lab Technician</td>
+                  <td>K. Nair</td>
+                  <td>P. Becker</td>
+                  <td>1.0</td>
+                  <td>New Capacity</td>
+                  <td>2026-06-01</td>
+                  <td>2027-05-31</td>
+                </tr>
+              </tbody>
+            </table>
             </div>
           </div>
         </div>
 
         <!-- CSSC Panel -->
         <div class="detail-panel" id="panel-cssc">
-          <h2 class="detail-panel__title">Corporate Shared Service Center (CSSC)</h2>
-          <p class="detail-panel__desc">Enterprise corporate functions covering finance &amp; accounting, human resources, procurement, and legal &amp; compliance shared services.</p>
-          <div class="svc-grid">
-            <div class="svc-card">
-              <div class="svc-card__name">Finance &amp; Accounting</div>
-              <div class="svc-card__meta">
-                <span>Accounts Payable / Receivable</span>
-                <span>Financial Reporting</span>
-              </div>
-              <div class="svc-card__status svc-card__status--active"><span class="svc-card__status-dot"></span> Active</div>
-            </div>
-            <div class="svc-card">
-              <div class="svc-card__name">Human Resources</div>
-              <div class="svc-card__meta">
-                <span>Payroll &amp; Benefits</span>
-                <span>Talent Acquisition</span>
-              </div>
-              <div class="svc-card__status svc-card__status--active"><span class="svc-card__status-dot"></span> Active</div>
-            </div>
-            <div class="svc-card">
-              <div class="svc-card__name">Procurement</div>
-              <div class="svc-card__meta">
-                <span>Vendor Management</span>
-                <span>Purchase Order Processing</span>
-              </div>
-              <div class="svc-card__status svc-card__status--pending"><span class="svc-card__status-dot"></span> In Review</div>
-            </div>
-            <div class="svc-card">
-              <div class="svc-card__name">Legal &amp; Compliance</div>
-              <div class="svc-card__meta">
-                <span>Contract Management</span>
-                <span>Regulatory Compliance</span>
-              </div>
-              <div class="svc-card__status svc-card__status--complete"><span class="svc-card__status-dot"></span> Transitioned</div>
+          <h2 class="detail-panel__title">Commercial Shared Service Center (CSSC)</h2>
+          <p class="detail-panel__desc">Enterprise corporate functions covering finance &amp; accounting, human resources, procurement, and legal &amp; compliance.</p>
+          <div class="svc-table-wrap">
+            <div class="svc-table-scroll">
+            <table class="svc-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>S.No</th>
+                  <th>Vertical</th>
+                  <th>Service Area</th>
+                  <th>Job Position</th>
+                  <th>Responsible TSSC</th>
+                  <th>Responsible HQ</th>
+                  <th>Required FTE</th>
+                  <th>New Capacity / Relocation from HQ</th>
+                  <th>Planned Start at SSC</th>
+                  <th>End Date of SSC</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><button class="svc-row-expand" type="button" aria-label="View transition cycle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button></td>
+                  <td>1</td>
+                  <td>Accounting</td>
+                  <td>Accounts Payable / Receivable</td>
+                  <td>Accounts Analyst</td>
+                  <td>S. Menon</td>
+                  <td>C. Schulz</td>
+                  <td>3.0</td>
+                  <td>Relocation from HQ</td>
+                  <td>2026-04-01</td>
+                  <td>2027-03-31</td>
+                </tr>
+                <tr>
+                  <td><button class="svc-row-expand" type="button" aria-label="View transition cycle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button></td>
+                  <td>2</td>
+                  <td>People Ops</td>
+                  <td>Payroll &amp; Benefits</td>
+                  <td>HR Specialist</td>
+                  <td>A. Das</td>
+                  <td>E. Zimmermann</td>
+                  <td>2.0</td>
+                  <td>New Capacity</td>
+                  <td>2026-05-01</td>
+                  <td>2027-04-30</td>
+                </tr>
+                <tr>
+                  <td><button class="svc-row-expand" type="button" aria-label="View transition cycle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button></td>
+                  <td>3</td>
+                  <td>Supply Chain</td>
+                  <td>Vendor Management</td>
+                  <td>Procurement Officer</td>
+                  <td>B. Singh</td>
+                  <td>D. Krause</td>
+                  <td>1.5</td>
+                  <td>New Capacity</td>
+                  <td>2026-06-01</td>
+                  <td>2027-05-31</td>
+                </tr>
+              </tbody>
+            </table>
             </div>
           </div>
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- Transition Cycle Modal -->
+  <div class="tc-overlay" id="tcOverlay">
+    <div class="tc-modal">
+      <button class="tc-modal__close" id="tcClose" type="button" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="tc-head" id="tcHead"></div>
+      <div class="tc-gantt-wrap" id="tcGanttWrap"></div>
+      <div class="tc-footer" id="tcFooter"></div>
+      <div class="tc-legend" id="tcLegend"></div>
+    </div>
   </div>
 
   <!-- Wave transition overlay -->
