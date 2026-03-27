@@ -63,19 +63,19 @@ if (eyeBtn && password) {
 // Dark mode is handled by barba-init.js initDarkMode()
 // Removed from here to prevent double-toggle on pages that load both scripts.
 
-// Basic client-side validation demo
+// Basic client-side validation + API login
+// NOTE: Primary login logic is in barba-init.js initLoginPage().
+// This file is a fallback for pages that load script.js directly.
 const form = document.getElementById('loginForm');
 form?.addEventListener('submit', (e) => {
   e.preventDefault();
   const emp = document.getElementById('empId');
   const pwd = document.getElementById('password');
 
-  // simple check UI
   const invalid = [];
   if (!emp.value.trim()) invalid.push('Employee ID is required.');
   if (!pwd.value.trim()) invalid.push('Password is required.');
 
-  // clear previous styles
   [emp, pwd].forEach(i => i.style.borderColor = '');
 
   if (invalid.length) {
@@ -86,7 +86,6 @@ form?.addEventListener('submit', (e) => {
     return;
   }
 
-  // Show loading state on button
   const submitBtn = form.querySelector('.btn-primary');
   const originalText = submitBtn ? submitBtn.textContent : '';
 
@@ -95,16 +94,37 @@ form?.addEventListener('submit', (e) => {
     submitBtn.textContent = 'Signing in';
   }
 
-  // Simulate auth delay, then show success toast
-  setTimeout(() => {
+  fetch('/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ empId: emp.value.trim(), password: pwd.value })
+  })
+  .then(res => res.json().then(data => ({ status: res.status, data })))
+  .then(result => {
+    if (result.status !== 200 || !result.data.ok) {
+      if (submitBtn) {
+        submitBtn.classList.remove('is-loading');
+        submitBtn.textContent = originalText;
+      }
+      alert(result.data.error || 'Login failed.');
+      return;
+    }
+    sessionStorage.setItem('authToken', result.data.token);
+    sessionStorage.setItem('empId', result.data.empId);
     if (submitBtn) {
       submitBtn.classList.remove('is-loading');
       submitBtn.textContent = originalText;
     }
-
-    // Show a success toast notification
     showToast('Signed in successfully!', 'success');
-  }, 1200);
+    setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
+  })
+  .catch(() => {
+    if (submitBtn) {
+      submitBtn.classList.remove('is-loading');
+      submitBtn.textContent = originalText;
+    }
+    alert('Network error. Make sure the server is running.');
+  });
 });
 
 /* ===========================
