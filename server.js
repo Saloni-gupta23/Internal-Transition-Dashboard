@@ -1,11 +1,73 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
+const crypto = require('crypto');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Serve static files (HTML, CSS, JS, assets)
+app.use(express.static(path.join(__dirname)));
+
+// ── In-memory session store (demo only) ──
+const sessions = new Map();
+
+// Demo credentials (replace with DB lookup in production)
+const DEMO_USERS = [
+  { empId: 'admin',  password: 'admin123' },
+  { empId: 'EMP001', password: 'phoenix2026' }
+];
+
+// API – login
+app.post('/api/login', (req, res) => {
+  const { empId, password } = req.body;
+  if (!empId || !password) {
+    return res.status(400).json({ error: 'Employee ID and password are required.' });
+  }
+
+  const user = DEMO_USERS.find(
+    u => u.empId.toLowerCase() === empId.trim().toLowerCase() && u.password === password
+  );
+
+  if (!user) {
+    return res.status(401).json({ error: 'Invalid Employee ID or password.' });
+  }
+
+  // Create a session token
+  const token = crypto.randomBytes(32).toString('hex');
+  sessions.set(token, { empId: user.empId, created: Date.now() });
+
+  // Auto-expire after 8 hours
+  setTimeout(() => sessions.delete(token), 8 * 60 * 60 * 1000);
+
+  res.json({ ok: true, token, empId: user.empId });
+});
+
+// API – check auth
+app.get('/api/check-auth', (req, res) => {
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+  const token = auth.slice(7);
+  const session = sessions.get(token);
+  if (!session) {
+    return res.status(401).json({ error: 'Session expired' });
+  }
+  res.json({ ok: true, empId: session.empId });
+});
+
+// API – logout
+app.post('/api/logout', (req, res) => {
+  const auth = req.headers.authorization;
+  if (auth && auth.startsWith('Bearer ')) {
+    sessions.delete(auth.slice(7));
+  }
+  res.json({ ok: true });
+});
 
 // Reusable transporter
 const transporter = nodemailer.createTransport({
@@ -33,7 +95,7 @@ app.post('/api/send-reset', async (req, res) => {
     const token = encodeURIComponent(Buffer.from(`${email}|${Date.now()}`).toString('base64'));
     const resetUrl = `${process.env.RESET_BASE_URL}?token=${token}`;
 
-    const html = 
+    const html = `
       <div style="font-family:Arial,Helvetica,sans-serif;line-height:1.5;color:#0b1f24">
         <h2 style="color:#007982;margin:0 0 8px">Reset your password</h2>
         <p>We received a request to reset the password for the account associated with <b>${email}</b>.</p>
@@ -43,9 +105,9 @@ app.post('/api/send-reset', async (req, res) => {
             Reset Password
           </a>
         </p>
-        <p style="font-size:13px;color:#3d4d53">If you didn’t request this, you can safely ignore this email.</p>
+        <p style="font-size:13px;color:#3d4d53">If you didn't request this, you can safely ignore this email.</p>
       </div>
-    ;
+    `;
 
     await transporter.sendMail({
       from: process.env.FROM_EMAIL,
