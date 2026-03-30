@@ -26,6 +26,15 @@
     .doi-kpi{ background: rgba(0,121,130,.04); border: 1px solid var(--stroke); border-radius: var(--radius-md); padding: 16px; text-align: center; }
     .doi-kpi__value{ font-family: Poppins, sans-serif; font-size: 28px; font-weight: 800; color: var(--brand-blue); }
     .doi-kpi__label{ font-family: 'Space Mono', monospace; font-size: 10px; color: var(--ink-2); text-transform: uppercase; letter-spacing: .3px; margin-top: 4px; }
+    .doi-submit-section{ margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--stroke); display: flex; gap: 16px; justify-content: center; align-items: center; flex-wrap: wrap; }
+    .doi-submit-btn{ font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; padding: 12px 32px; border-radius: 4px; border: none; cursor: pointer; transition: all .2s ease; display: inline-flex; align-items: center; gap: 8px; }
+    .doi-submit-btn--primary{ background: var(--brand-blue); color: #fff; }
+    .doi-submit-btn--primary:hover{ background: #007a82; box-shadow: 0 4px 12px rgba(0,121,130,.3); }
+    .doi-submit-btn--primary:active{ transform: scale(0.98); }
+    .doi-submit-btn.is-loading{ opacity: 0.6; pointer-events: none; }
+    .doi-submit-btn--secondary{ background: transparent; color: var(--brand-blue); border: 1px solid var(--brand-blue); }
+    .doi-submit-btn--secondary:hover{ background: rgba(0,121,130,.08); border-color: var(--brand-blue); }
+    .doi-submit-btn--secondary:active{ transform: scale(0.98); }
   </style>
 </head>
 <body data-barba="wrapper">
@@ -127,9 +136,61 @@
           <li>Knowledge transfer documentation and support handover plan</li>
         </ul>
       </div>
+
+      <div class="doi-submit-section">
+        <button class="doi-submit-btn doi-submit-btn--primary" id="doiSubmitBtn" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Submit Phase
+        </button>
+        <button class="doi-submit-btn doi-submit-btn--secondary" id="doiCancelBtn" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          Cancel
+        </button>
+      </div>
     </div>
   </div>
 
   <script src="barba-init.js"></script>
+  <script>
+    // DOI Submit Button Handler
+    const submitBtn = document.getElementById('doiSubmitBtn');
+    if (submitBtn) {
+      submitBtn.addEventListener('click', function() {
+        const pageTitle = document.querySelector('.doi-title')?.textContent || 'Phase';
+        const doiStage = document.querySelector('.doi-badge')?.textContent || 'Unknown Stage';
+        
+        submitBtn.classList.add('is-loading');
+        submitBtn.textContent = 'Submitting...';
+        
+        setTimeout(() => {
+          submitBtn.classList.remove('is-loading');
+          submitBtn.textContent = '✓ Submitted';
+          
+          // Show success notification
+          const msg = `${pageTitle} (${doiStage}) submitted successfully!`;
+          if (window.showToast) {
+            showToast(msg, 'success');
+          } else {
+            alert(msg);
+          }
+          
+          // Reset button after 2 seconds
+          setTimeout(() => {
+            submitBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Submit Phase';
+          }, 2000);
+        }, 1200);
+      });
+    }
+
+    // DOI Cancel Button Handler
+    const cancelBtn = document.getElementById('doiCancelBtn');
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', function() {
+        if (confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
+          window.history.back();
+        }
+      });
+    }
+  </script>
 </body>
 </html>
