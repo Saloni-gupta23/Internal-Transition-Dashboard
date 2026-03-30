@@ -63,69 +63,95 @@ if (eyeBtn && password) {
 // Dark mode is handled by barba-init.js initDarkMode()
 // Removed from here to prevent double-toggle on pages that load both scripts.
 
-// Basic client-side validation + API login
-// NOTE: Primary login logic is in barba-init.js initLoginPage().
-// This file is a fallback for pages that load script.js directly.
+// ===========================
+// Login Authentication System
+// ===========================
+// Demo credentials (for testing purposes)
+const DEMO_CREDENTIALS = {
+  'E001': { password: 'password123', name: 'John Doe', email: 'john.doe@company.com' },
+  'E002': { password: 'password123', name: 'Jane Smith', email: 'jane.smith@company.com' },
+  'E003': { password: 'password123', name: 'Admin User', email: 'admin@company.com' },
+  'EMP001': { password: 'demo', name: 'Demo User', email: 'demo@company.com' }
+};
+
 const form = document.getElementById('loginForm');
-form?.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const emp = document.getElementById('empId');
-  const pwd = document.getElementById('password');
+if (form) {
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const empIdInput = document.getElementById('empId');
+    const passwordInput = document.getElementById('password');
+    const submitBtn = form.querySelector('.btn-primary');
 
-  const invalid = [];
-  if (!emp.value.trim()) invalid.push('Employee ID is required.');
-  if (!pwd.value.trim()) invalid.push('Password is required.');
+    // Validation
+    const invalid = [];
+    if (!empIdInput.value.trim()) invalid.push('Employee ID is required.');
+    if (!passwordInput.value.trim()) invalid.push('Password is required.');
 
-  [emp, pwd].forEach(i => i.style.borderColor = '');
+    // Clear previous error styling
+    [empIdInput, passwordInput].forEach(i => i.style.borderColor = '');
 
-  if (invalid.length) {
-    [emp, pwd].forEach(i => {
-      if (!i.value.trim()) i.style.borderColor = '#E86A6A';
-    });
-    alert(invalid.join('\n'));
-    return;
-  }
+    if (invalid.length) {
+      [empIdInput, passwordInput].forEach(i => {
+        if (!i.value.trim()) i.style.borderColor = '#E86A6A';
+      });
+      alert(invalid.join('\n'));
+      return;
+    }
 
-  const submitBtn = form.querySelector('.btn-primary');
-  const originalText = submitBtn ? submitBtn.textContent : '';
+    const empId = empIdInput.value.trim();
+    const password = passwordInput.value;
 
-  if (submitBtn) {
-    submitBtn.classList.add('is-loading');
-    submitBtn.textContent = 'Signing in';
-  }
+    // Show loading state
+    const originalText = submitBtn.textContent;
+    if (submitBtn) {
+      submitBtn.classList.add('is-loading');
+      submitBtn.textContent = 'Signing in...';
+      submitBtn.disabled = true;
+    }
 
-  fetch('/api/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ empId: emp.value.trim(), password: pwd.value })
-  })
-  .then(res => res.json().then(data => ({ status: res.status, data })))
-  .then(result => {
-    if (result.status !== 200 || !result.data.ok) {
+    // Simulate API delay for better UX
+    setTimeout(() => {
+      // Check credentials against demo data
+      const user = DEMO_CREDENTIALS[empId];
+      
+      if (!user || user.password !== password) {
+        // Reset button state
+        if (submitBtn) {
+          submitBtn.classList.remove('is-loading');
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
+        }
+        empIdInput.style.borderColor = '#E86A6A';
+        passwordInput.style.borderColor = '#E86A6A';
+        showToast('Invalid Employee ID or Password', 'error');
+        return;
+      }
+
+      // Generate auth token
+      const authToken = 'token_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+      
+      // Store in sessionStorage (required for dashboard auth guard)
+      sessionStorage.setItem('authToken', authToken);
+      sessionStorage.setItem('empId', empId);
+      sessionStorage.setItem('userName', user.name);
+      sessionStorage.setItem('userEmail', user.email);
+
+      // Reset button state
       if (submitBtn) {
         submitBtn.classList.remove('is-loading');
         submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
       }
-      alert(result.data.error || 'Login failed.');
-      return;
-    }
-    sessionStorage.setItem('authToken', result.data.token);
-    sessionStorage.setItem('empId', result.data.empId);
-    if (submitBtn) {
-      submitBtn.classList.remove('is-loading');
-      submitBtn.textContent = originalText;
-    }
-    showToast('Signed in successfully!', 'success');
-    setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
-  })
-  .catch(() => {
-    if (submitBtn) {
-      submitBtn.classList.remove('is-loading');
-      submitBtn.textContent = originalText;
-    }
-    alert('Network error. Make sure the server is running.');
+
+      showToast('Signed in successfully! Redirecting...', 'success');
+      
+      // Redirect to dashboard after a short delay
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 800);
+    }, 1200); // 1.2 second delay to simulate API call
   });
-});
+}
 
 /* ===========================
    Toast notification system
