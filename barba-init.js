@@ -65,13 +65,45 @@ function initLoginPage() {
         submitBtn.textContent = 'Signing in';
       }
 
-      setTimeout(function () {
+      // POST credentials to the login API
+      fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ empId: emp.value.trim(), password: pwd.value })
+      })
+      .then(function (res) { return res.json().then(function (data) { return { status: res.status, data: data }; }); })
+      .then(function (result) {
+        if (result.status !== 200 || !result.data.ok) {
+          if (submitBtn) {
+            submitBtn.classList.remove('is-loading');
+            submitBtn.textContent = originalText;
+          }
+          alert(result.data.error || 'Login failed. Please try again.');
+          return;
+        }
+
+        // Store session token
+        sessionStorage.setItem('authToken', result.data.token);
+        sessionStorage.setItem('empId', result.data.empId);
+
         if (submitBtn) {
           submitBtn.classList.remove('is-loading');
           submitBtn.textContent = originalText;
         }
         showToast('Signed in successfully!', 'success');
-      }, 1200);
+
+        // Redirect to dashboard after toast is visible
+        setTimeout(function () {
+          window.location.href = 'dashboard.html';
+        }, 800);
+      })
+      .catch(function () {
+        if (submitBtn) {
+          submitBtn.classList.remove('is-loading');
+          submitBtn.textContent = originalText;
+        }
+        alert('Network error. Make sure the server is running.');
+      });
     });
   }
 }
@@ -238,6 +270,26 @@ function initDashboardPage() {
   var empty = document.getElementById('dashEmpty');
   if (!tabs.length) return;
 
+  // Update sidebar badges with actual row counts from each panel's table
+  tabs.forEach(function (tab) {
+    var panelId = tab.getAttribute('data-panel');
+    var panel = document.getElementById('panel-' + panelId);
+    if (panel) {
+      var rowCount = panel.querySelectorAll('.svc-table tbody tr').length;
+      var badge = tab.querySelector('.sidebar__tab-badge');
+      if (badge) badge.textContent = rowCount;
+    }
+  });
+
+  /* Sidebar toggle */
+  var sidebar = document.getElementById('sidebar');
+  var toggleBtn = document.getElementById('sidebarToggle');
+  if (sidebar && toggleBtn) {
+    toggleBtn.addEventListener('click', function () {
+      sidebar.classList.toggle('is-collapsed');
+    });
+  }
+
   var pinned = null; // tracks the clicked/pinned tab id
 
   function showPanel(id) {
@@ -263,6 +315,384 @@ function initDashboardPage() {
         pinned = id;
         showPanel(id);
       }
+    });
+  });
+
+  /* ── Transition Cycle Modal ── */
+  var overlay = document.getElementById('tcOverlay');
+  var tcHead    = document.getElementById('tcHead');
+  var tcGantt   = document.getElementById('tcGanttWrap');
+  var tcFooter  = document.getElementById('tcFooter');
+  var tcLegend  = document.getElementById('tcLegend');
+  var tcClose   = document.getElementById('tcClose');
+
+  function closeModal() {
+    if (overlay) overlay.classList.remove('is-open');
+  }
+  if (tcClose) tcClose.addEventListener('click', closeModal);
+  if (overlay) overlay.addEventListener('click', function (e) {
+    if (e.target === overlay) closeModal();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  /* Month helpers */
+  var MON = ['Jan','Feb','Mar','Apr','Mai','Jun','Jul','Aug','Sep','Oct','Nov','Dez'];
+
+  function buildMonthColumns(startDate, endDate) {
+    var s = new Date(startDate);
+    var e = new Date(endDate);
+    // Expand range: start 2 months before, end 3 months after
+    var from = new Date(s.getFullYear(), s.getMonth() - 2, 1);
+    var to   = new Date(e.getFullYear(), e.getMonth() + 3, 1);
+    var cols = [];
+    var d = new Date(from);
+    while (d < to) {
+      cols.push({ year: d.getFullYear(), month: d.getMonth() });
+      d = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+    }
+    return cols;
+  }
+
+  function buildGanttPhases(startDate, endDate) {
+    var s = new Date(startDate);
+    var e = new Date(endDate);
+    var total = e - s;
+    return [
+      { doi: '1 Strategic Planning',   wp: 'Service identification: Potential & Process analyses, SSC Masterplan, Service Profile', s: 0, e: 0.1, url: 'doi-strategic-planning.html' },
+      { doi: '2 Budget',               wp: 'Release of service implementation', s: 0.08, e: 0.15, url: 'doi-budget.html' },
+      { doi: '3 Operative Planning',   wp: 'Kick-off of transitions with SSC locations & Creation of job description, Release of recruitment', s: 0.12, e: 0.25, url: 'doi-operative-planning.html' },
+      { doi: '',                        wp: 'Recruiting', s: 0.2, e: 0.45, sub: true },
+      { doi: '',                        wp: 'Preparation of training material, IT & space', s: 0.3, e: 0.55, sub: true },
+      { doi: '4 Execution',            wp: 'Preparation of process & documentation', s: 0.35, e: 0.55, url: 'doi-execution.html' },
+      { doi: '',                        wp: 'Onboarding / Training / Knowledge transfer Cut-over', s: 0.5, e: 0.75, sub: true },
+      { doi: '',                        wp: 'Hypercare / Stabilization', s: 0.7, e: 0.85, sub: true },
+      { doi: '5 Monitoring',           wp: 'Tracking service effectivity & improvement', s: 0.8, e: 1.0, url: 'doi-monitoring.html' }
+    ].map(function (p) {
+      return {
+        doi: p.doi,
+        wp: p.wp,
+        start: new Date(s.getTime() + total * p.s),
+        end:   new Date(s.getTime() + total * p.e),
+        sub: !!p.sub,
+        url: p.url || ''
+      };
+    });
+  }
+
+  function getStatus(phaseEnd) {
+    var now = new Date();
+    if (now >= phaseEnd) return 'on-track';
+    return 'not-started';
+  }
+
+  function openModal(row) {
+    var cells = row.querySelectorAll('td');
+    var vertical  = cells[2] ? cells[2].textContent : '';
+    var service   = cells[3] ? cells[3].textContent : '';
+    var position  = cells[4] ? cells[4].textContent : '';
+    var respTSSC  = cells[5] ? cells[5].textContent : '';
+    var respHQ    = cells[6] ? cells[6].textContent : '';
+    var fte       = cells[7] ? cells[7].textContent : '';
+    var capacity  = cells[8] ? cells[8].textContent : '';
+    var startDate = cells[9] ? cells[9].textContent : '';
+    var endDate   = cells[10] ? cells[10].textContent : '';
+
+    /* ── Header ── */
+    tcHead.innerHTML =
+      '<div class="tc-head__row">' +
+        '<div class="tc-head__left">' +
+          '<h3 class="tc-head__unit">' + vertical + ' &ndash; ' + position + '</h3>' +
+          '<p class="tc-head__service">Service Area: ' + service + '</p>' +
+          '<div class="tc-head__labels">' +
+            '<span class="tc-label tc-label--outline">Vertical: ' + vertical + '</span>' +
+            '<span class="tc-label tc-label--outline">Job Position: ' + position + '</span>' +
+            '<span class="tc-label tc-label--teal">' + capacity + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="tc-head__right">' +
+          '<div class="tc-badge tc-badge--status">Status</div>' +
+          '<div class="tc-badge tc-badge--fte">Total FTE: ' + fte + '</div>' +
+        '</div>' +
+      '</div>';
+
+    /* ── Gantt ── */
+    var cols = buildMonthColumns(startDate, endDate);
+    var phases = buildGanttPhases(startDate, endDate);
+
+    // Group columns by year
+    var years = {};
+    cols.forEach(function (c) {
+      if (!years[c.year]) years[c.year] = 0;
+      years[c.year]++;
+    });
+
+    // Year header
+    var yearRow = '<tr><td class="tc-gantt__doi-head" rowspan="5", >Degree of<br>Implementation (DOI)</td>' +
+                  '<td class="tc-gantt__wp-head" rowspan="5">Work packages</td>';
+    Object.keys(years).forEach(function (y) {
+      yearRow += '<td class="tc-gantt__year" colspan="' + years[y] + '">' + y + '</td>';
+    });
+    yearRow += '<td class="tc-gantt__status-head" rowspan="2">Status</td></tr>';
+
+    // Month header
+    
+    var monthRow = '<tr>';
+    cols.forEach(function (c) {
+      monthRow += '<td class="tc-gantt__month">' + MON[c.month] + '</td>';
+    });
+    monthRow += '</tr>';
+
+    // Phase rows
+    var bodyRows = '';
+    var prevDoi = '';
+    // Count sub-rows per DOI section for rowspan
+    var doiGroups = [];
+    var currentGroup = null;
+    phases.forEach(function (p) {
+      if (p.doi) {
+        if (currentGroup) doiGroups.push(currentGroup);
+        currentGroup = { doi: p.doi, count: 1 };
+      } else if (currentGroup) {
+        currentGroup.count++;
+      }
+    });
+    if (currentGroup) doiGroups.push(currentGroup);
+
+    var doiIdx = 0;
+    var doiRowsLeft = 0;
+    phases.forEach(function (p) {
+      bodyRows += '<tr>';
+      if (p.doi) {
+        var g = doiGroups[doiIdx];
+        var doiContent = p.url
+          ? '<a href="' + p.url + '" class="tc-gantt__doi-link">' + p.doi + '</a>'
+          : p.doi;
+        bodyRows += '<td class="tc-gantt__doi" rowspan="' + g.count + '">' + doiContent + '</td>';
+        doiIdx++;
+        doiRowsLeft = g.count - 1;
+      } else {
+        doiRowsLeft--;
+      }
+      bodyRows += '<td class="tc-gantt__wp">' + p.wp + '</td>';
+      cols.forEach(function (c) {
+        var colStart = new Date(c.year, c.month, 1);
+        var colEnd   = new Date(c.year, c.month + 1, 0);
+        var barStart = p.start > colStart ? p.start : colStart;
+        var barEnd   = p.end < colEnd ? p.end : colEnd;
+        bodyRows += '<td class="tc-gantt__bar-cell">';
+        if (barStart <= barEnd && p.start <= colEnd && p.end >= colStart) {
+          var colDays = (colEnd - colStart) / 86400000;
+          var left  = Math.max(0, (barStart - colStart) / 86400000 / colDays * 100);
+          var right = Math.max(0, (colEnd - barEnd) / 86400000 / colDays * 100);
+          bodyRows += '<div class="tc-gantt__bar tc-gantt__bar--grey" style="left:' + left + '%;right:' + right + '%"></div>';
+        }
+        bodyRows += '</td>';
+      });
+      var st = getStatus(p.end);
+      bodyRows += '<td class="tc-gantt__status-cell"><span class="tc-status-dot tc-status-dot--' + st + '"></span></td>';
+      bodyRows += '</tr>';
+    });
+
+    tcGantt.innerHTML = '<table class="tc-gantt"><thead>' + yearRow + monthRow + '</thead><tbody>' + bodyRows + '</tbody></table>';
+
+    /* ── Footer boxes ── */
+    tcFooter.innerHTML =
+      '<div class="tc-footer__box">' +
+        '<div class="tc-footer__title">Results since last update</div>' +
+        '<div class="tc-footer__body"><ul style="margin:0;padding-left:14px"><li>Not yet started</li></ul></div>' +
+      '</div>' +
+      '<div class="tc-footer__box">' +
+        '<div class="tc-footer__title">Next steps until next update</div>' +
+        '<div class="tc-footer__body"></div>' +
+      '</div>' +
+      '<div class="tc-footer__box">' +
+        '<div class="tc-footer__title">Critical open points and decisions</div>' +
+        '<div class="tc-footer__body"></div>' +
+      '</div>';
+
+    /* ── Legend ── */
+    tcLegend.innerHTML =
+      '<span class="tc-legend__item"><span class="tc-legend__dot" style="background:#e74c3c"></span> Delivery not achievable</span>' +
+      '<span class="tc-legend__item"><span class="tc-legend__dot" style="background:#f5c242"></span> Deliver under risk</span>' +
+      '<span class="tc-legend__item"><span class="tc-legend__dot" style="background:#93C11C"></span> On track</span>' +
+      '<span class="tc-legend__item"><span class="tc-legend__dot" style="background:#fff;border:1px solid #aaa"></span> Not started</span>' +
+      '<span class="tc-legend__item"><span class="tc-legend__tri" style="border-bottom-color:#222"></span> Go live</span>' +
+      '<span class="tc-legend__item"><span class="tc-legend__tri" style="border-bottom-color:#93C11C"></span> Milestone completed</span>';
+
+    overlay.classList.add('is-open');
+  }
+
+  document.querySelectorAll('.svc-row-expand').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var row = btn.closest('tr');
+      if (!row) return;
+
+      // If already expanded, collapse it
+      var existingExpand = row.nextElementSibling;
+      if (existingExpand && existingExpand.classList.contains('svc-expand-row')) {
+        btn.classList.remove('is-expanded');
+        var inner = existingExpand.querySelector('.svc-expand-inner');
+        if (inner) inner.classList.remove('is-open');
+        setTimeout(function () { existingExpand.remove(); }, 450);
+        return;
+      }
+
+      // Collapse any other open expansions in this table
+      var table = row.closest('table');
+      table.querySelectorAll('.svc-expand-row').forEach(function (er) {
+        var prevBtn = er.previousElementSibling ? er.previousElementSibling.querySelector('.svc-row-expand') : null;
+        if (prevBtn) prevBtn.classList.remove('is-expanded');
+        var innerEl = er.querySelector('.svc-expand-inner');
+        if (innerEl) innerEl.classList.remove('is-open');
+        setTimeout(function () { er.remove(); }, 450);
+      });
+
+      btn.classList.add('is-expanded');
+
+      // Build inline content (same as modal)
+      var colCount = row.querySelectorAll('td').length;
+      var expandRow = document.createElement('tr');
+      expandRow.className = 'svc-expand-row';
+      var expandTd = document.createElement('td');
+      expandTd.setAttribute('colspan', colCount);
+      var expandInner = document.createElement('div');
+      expandInner.className = 'svc-expand-inner';
+      var expandContent = document.createElement('div');
+      expandContent.className = 'svc-expand-content';
+
+      // Build header + gantt + footer + legend using openModal data
+      var cells = row.querySelectorAll('td');
+      var vertical  = cells[2] ? cells[2].textContent : '';
+      var service   = cells[3] ? cells[3].textContent : '';
+      var position  = cells[4] ? cells[4].textContent : '';
+      var fte       = cells[7] ? cells[7].textContent : '';
+      var capacity  = cells[8] ? cells[8].textContent : '';
+      var startDate = cells[9] ? cells[9].textContent : '';
+      var endDate   = cells[10] ? cells[10].textContent : '';
+
+      /* Header */
+      var headHTML =
+        '<div class="tc-head">' +
+          '<div class="tc-head__row">' +
+            '<div class="tc-head__left">' +
+              '<h3 class="tc-head__unit">' + vertical + ' &ndash; ' + position + '</h3>' +
+              '<p class="tc-head__service">Service Area: ' + service + '</p>' +
+              '<div class="tc-head__labels">' +
+                '<span class="tc-label tc-label--outline">Vertical: ' + vertical + '</span>' +
+                '<span class="tc-label tc-label--outline">Job Position: ' + position + '</span>' +
+                '<span class="tc-label tc-label--teal">' + capacity + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="tc-head__right">' +
+              '<div class="tc-badge tc-badge--status">Status</div>' +
+              '<div class="tc-badge tc-badge--fte">Total FTE: ' + fte + '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+      /* Gantt */
+      var cols = buildMonthColumns(startDate, endDate);
+      var phases = buildGanttPhases(startDate, endDate);
+      var years = {};
+      cols.forEach(function (c) {
+        if (!years[c.year]) years[c.year] = 0;
+        years[c.year]++;
+      });
+      var yearRow = '<tr><td class="tc-gantt__doi-head" rowspan="5">Degree of<br>Implementation (DOI)</td>' +
+                    '<td class="tc-gantt__wp-head" rowspan="5">Work packages</td>';
+      Object.keys(years).forEach(function (y) {
+        yearRow += '<td class="tc-gantt__year" colspan="' + years[y] + '">' + y + '</td>';
+      });
+      yearRow += '<td class="tc-gantt__status-head" rowspan="2">Status</td></tr>';
+      var monthRow = '<tr>';
+      cols.forEach(function (c) {
+        monthRow += '<td class="tc-gantt__month">' + MON[c.month] + '</td>';
+      });
+      monthRow += '</tr>';
+      var bodyRows = '';
+      var doiGroups = [];
+      var currentGroup = null;
+      phases.forEach(function (p) {
+        if (p.doi) {
+          if (currentGroup) doiGroups.push(currentGroup);
+          currentGroup = { doi: p.doi, count: 1 };
+        } else if (currentGroup) {
+          currentGroup.count++;
+        }
+      });
+      if (currentGroup) doiGroups.push(currentGroup);
+      var doiIdx = 0;
+      phases.forEach(function (p) {
+        bodyRows += '<tr>';
+        if (p.doi) {
+          var g = doiGroups[doiIdx];
+          var doiContent = p.url
+            ? '<a href="' + p.url + '" class="tc-gantt__doi-link">' + p.doi + '</a>'
+            : p.doi;
+          bodyRows += '<td class="tc-gantt__doi" rowspan="' + g.count + '">' + doiContent + '</td>';
+          doiIdx++;
+        }
+        bodyRows += '<td class="tc-gantt__wp">' + p.wp + '</td>';
+        cols.forEach(function (c) {
+          var colStart = new Date(c.year, c.month, 1);
+          var colEnd   = new Date(c.year, c.month + 1, 0);
+          var barStart = p.start > colStart ? p.start : colStart;
+          var barEnd   = p.end < colEnd ? p.end : colEnd;
+          bodyRows += '<td class="tc-gantt__bar-cell">';
+          if (barStart <= barEnd && p.start <= colEnd && p.end >= colStart) {
+            var colDays = (colEnd - colStart) / 86400000;
+            var left  = Math.max(0, (barStart - colStart) / 86400000 / colDays * 100);
+            var right = Math.max(0, (colEnd - barEnd) / 86400000 / colDays * 100);
+            bodyRows += '<div class="tc-gantt__bar tc-gantt__bar--grey" style="left:' + left + '%;right:' + right + '%"></div>';
+          }
+          bodyRows += '</td>';
+        });
+        var st = getStatus(p.end);
+        bodyRows += '<td class="tc-gantt__status-cell"><span class="tc-status-dot tc-status-dot--' + st + '"></span></td>';
+        bodyRows += '</tr>';
+      });
+      var ganttHTML = '<div class="tc-gantt-wrap"><table class="tc-gantt"><thead>' + yearRow + monthRow + '</thead><tbody>' + bodyRows + '</tbody></table></div>';
+
+      /* Footer */
+      var footerHTML =
+        '<div class="tc-footer">' +
+          '<div class="tc-footer__box">' +
+            '<div class="tc-footer__title">Results since last update</div>' +
+            '<div class="tc-footer__body"><ul style="margin:0;padding-left:14px"><li>Not yet started</li></ul></div>' +
+          '</div>' +
+          '<div class="tc-footer__box">' +
+            '<div class="tc-footer__title">Next steps until next update</div>' +
+            '<div class="tc-footer__body"></div>' +
+          '</div>' +
+          '<div class="tc-footer__box">' +
+            '<div class="tc-footer__title">Critical open points and decisions</div>' +
+            '<div class="tc-footer__body"></div>' +
+          '</div>' +
+        '</div>';
+
+      /* Legend */
+      var legendHTML =
+        '<div class="tc-legend">' +
+          '<span class="tc-legend__item"><span class="tc-legend__dot" style="background:#e74c3c"></span> Delivery not achievable</span>' +
+          '<span class="tc-legend__item"><span class="tc-legend__dot" style="background:#f5c242"></span> Deliver under risk</span>' +
+          '<span class="tc-legend__item"><span class="tc-legend__dot" style="background:#93C11C"></span> On track</span>' +
+          '<span class="tc-legend__item"><span class="tc-legend__dot" style="background:#fff;border:1px solid #aaa"></span> Not started</span>' +
+          '<span class="tc-legend__item"><span class="tc-legend__tri" style="border-bottom-color:#222"></span> Go live</span>' +
+          '<span class="tc-legend__item"><span class="tc-legend__tri" style="border-bottom-color:#93C11C"></span> Milestone completed</span>' +
+        '</div>';
+
+      expandContent.innerHTML = headHTML + ganttHTML + footerHTML + legendHTML;
+      expandInner.appendChild(expandContent);
+      expandTd.appendChild(expandInner);
+      expandRow.appendChild(expandTd);
+      row.parentNode.insertBefore(expandRow, row.nextSibling);
+
+      // Trigger open animation on next frame
+      requestAnimationFrame(function () {
+        expandInner.classList.add('is-open');
+      });
     });
   });
 }
